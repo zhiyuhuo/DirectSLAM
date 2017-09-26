@@ -1,0 +1,1 @@
+sudo ../bin/appPlayDataset ../configs/calibration_huaweimate9.txt /home/rokid/Pictures/slam_database/huaweimate9_1/rgb.txt /home/rokid/Pictures/slam_database/huaweimate9_1/imu_data.txt ../test/config.yaml

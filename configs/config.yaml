@@ -1,0 +1,77 @@
+%YAML:1.0
+
+# ImageFrame
+ImageFrame.Scale: 1.5
+ImageFrame.GridW: 10
+ImageFrame.GridH: 10
+ImageFrame.minLevel: 0
+ImageFrame.maxLevel: 3
+
+# extract FAST
+FAST.iniThres: 30
+
+# ShiTomasi
+FAST.ShiTomasiThres: 100
+
+# optical flow num
+Opticalflow.num: 100
+
+# DirectSparse alignment
+DirectSparse.patchArea: 16  # 9, 16, 25, 36
+
+# Project patch match
+ProjectionMatch.disThres: 7
+ProjectionMatch.scoreThres: 35000
+
+# epipolar search
+EpipolarSearch.candiNum: 400
+EpipolarSearch.disThres: 5
+EpipolarSearch.scoreThres: 30000
+
+# KeyFrame selection
+KeyFrame.minNumFromLast: 10
+KeyFrame.parallaxMin: 0.9998
+KeyFrame.inlierNumMin: 30
+KeyFrame.inlierNumMax: 60      # lower and less keyframes
+
+# BA
+BA.bundleAdjustmentChi2Thres: 5.991
+BA.covisNumThres: 30
+
+# Tracking
+Tracking.matchNumMin: 500
+Tracking.motionBANumMax: 500
+Tracking.trackChi2Thres: 5.991
+#Tracking.trackChi2Thres: 5.99
+Tracking.iterNum: 1
+
+# Robust Kernel
+#RobustKernel.threshold: 2.477
+RobustKernel.threshold: 2.477
+
+# System
+System.debugMapping: 0
+
+# Use Depth Filter
+useDepthFilter: 0
+
+# Use Ceres
+useCeres: 1
+autoDiff: 1
+
+# Use Global BA
+useGLBA: 0
+
+# Log
+#    trace = 0,
+#    debug = 1,
+#    info = 2,
+#    warn = 3,
+#    err = 4,
+#    critical = 5,
+#    off = 6
+Log.level: 2
+Log.writeToFile: 0
+
+Viewer.needView: 1
+Viewer.scale: 0.8
