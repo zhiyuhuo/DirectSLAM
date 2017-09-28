@@ -28,11 +28,17 @@ public: // members
     TrackingState     mState;
 
     Frame mRefFrame;
+    std::vector<Frame> mFrameVecBuffer;
 
 public: // functions
-    bool SetFirstFrame(Frame& f);
-    TrackingState TrackMono(cv::Mat image);
-    bool TrackRefFrame(Frame& f);
+    bool SetRefFrame(Frame& f);
+    bool AddObvFrame(Frame& f);
+    TrackingState TrackMono(cv::Mat image, std::vector<float> R_, std::vector<float> t_);
+
+    bool BatchOptimizeSE3Depth(int levelNum);
+    
+    void CheckReprojection(Frame& ref, Frame& f);
+    void ShowDepth(Frame& f);
 };
 
 #endif

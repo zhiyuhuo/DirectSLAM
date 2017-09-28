@@ -27,6 +27,11 @@ int ReadImageFiles(const string& fileName, std::vector<std::string>& imgFiles, s
 
 int ReadImuData(const string& fileName, std::vector<std::vector<float> >& imuVecs, std::vector<long>& timeStamps);
 
+int ReadTransformOfFrames(const string& fileName, 
+                          std::vector<std::vector<float> >& rotations, 
+                          std::vector<std::vector<float> >& translations, 
+                          std::vector<long>& timeStamps);
+
 std::vector<float> GetImuTSforImage(long imgTimeStamp, const std::vector<std::vector<float> >& imuVecs, const std::vector<long>& timeStamps);
 
 
@@ -40,12 +45,17 @@ int main(int argc, char** argv)
     std::vector<long>                 imgTimeStamps;
     std::vector<std::vector<float> >  imuVecs;
     std::vector<long>                 imuTimeStamps;
+    std::vector<std::vector<float> >  resRotVecs;
+    std::vector<std::vector<float> >  resTransVecs;
+    std::vector<long>                 resTimeStamps;
     
     cv::Mat img_input;
     ReadImageFiles(argv[2], imgFiles, imgTimeStamps);
     ReadImuData(argv[3], imuVecs, imuTimeStamps);
-    std::cout << imgFiles.size() << ", " << imgTimeStamps.size() << ", " << imuVecs.size() << ", " << imuTimeStamps.size() << std::endl;
-    
+    ReadTransformOfFrames(argv[4], resRotVecs, resTransVecs, resTimeStamps);
+    std::cout << imgFiles.size() << ", " << imgTimeStamps.size() << ", " << imuVecs.size() << ", " << imuTimeStamps.size() << ", "
+              << resRotVecs.size() << ", " << resTransVecs.size() << ", " << resTimeStamps.size() << std::endl;
+
     /*-------- SLAM System --------*/
     // TO DO
     CameraIntrinsic* K = new CameraIntrinsic(argv[1]);
@@ -53,37 +63,51 @@ int main(int argc, char** argv)
 
     char cmd = ' ';
     bool started = false;
+    bool callAlgorithm = false;
     
-    int nImg = 1;
+    int nImg = 0;
     while (true) {
         img_input = cv::imread(imgFiles[nImg].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
         double timeStamp = double(imgTimeStamps[nImg]);
-        std::vector<float> Imu = GetImuTSforImage(imgTimeStamps[nImg], imuVecs, imuTimeStamps);
-
-        nImg++;
+        std::vector<float> imu = GetImuTSforImage(imgTimeStamps[nImg], imuVecs, imuTimeStamps);
 
         if (cmd == 's') {
             if (started) {
                 printf("The program breaks. You cannot restart the program\n");
             } else {
-                dvo.TrackMono(img_input);
                 started = true;
-                cv::destroyWindow("img_input");
             }
         } else {                                
             if (started) {
-                dvo.TrackMono(img_input);
+                if (nImg == 0) {
+                    dvo.TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                }
+
+                if (!callAlgorithm && resTransVecs[nImg][0] == 0 && resTransVecs[nImg+1][0] != 0) {
+                    dvo.TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                    callAlgorithm = true;
+                    // cv::destroyWindow("img_input");
+                } else {
+                    if (callAlgorithm) {
+                        dvo.TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                    }
+                }
                 cv::imshow("img_input", img_input);
             } else {
                 cv::imshow("img_input", img_input);
             }
         }
-        
+
         if (cmd == 'q') {
             break;
         }
 
-        cmd = cv::waitKey(-1);
+        if (started)
+            cmd = cv::waitKey(100);
+        else
+            cmd = cv::waitKey(-1);
+        
+        nImg++;
     }
 
     usleep(100000);
@@ -214,4 +238,53 @@ std::vector<float> GetImuTSforImage(long imgTimeStamp, const std::vector<std::ve
     }
     
     return res;
+}
+
+int ReadTransformOfFrames(const string& fileName, 
+                          std::vector<std::vector<float> >& rotations, 
+                          std::vector<std::vector<float> >& translations, 
+                          std::vector<long>& timeStamps)
+{
+    rotations.resize(0);
+    translations.resize(0);
+    timeStamps.resize(0);
+    std::vector<float> rotation(9);
+    std::vector<float> translation(3);
+    long timeStamp = 0;
+
+    ifstream file;
+    file.open(fileName);
+    if ( !file.is_open() ) {
+        printf("Open SLAM results dataset %s failed!\n", fileName.c_str());
+        return -1;
+    }
+    
+    while (true) {
+        double timeStamp;
+        string strLine;
+        if (getline(file, strLine)) {
+            stringstream ss(strLine);
+
+            ss >> timeStamp  
+               >> rotation[0] >> rotation[1] >> rotation[2] 
+               >> rotation[3] >> rotation[4] >> rotation[5] 
+               >> rotation[6] >> rotation[7] >> rotation[8]
+               >> translation[0] >> translation[1] >> translation[2];        
+            
+            // std::cout << long(timeStamp) << " " 
+            //           << rotation[0] << " " << rotation[1] << " " << rotation[2] << " " 
+            //           << rotation[3] << " " << rotation[4] << " " << rotation[5] << " "
+            //           << rotation[6] << " " << rotation[7] << " " << rotation[8] << " "
+            //           << translation[0] << " " << translation[1] << " " << translation[2]
+            //           << std::endl;
+            // copy to result;
+            rotations.push_back(rotation);
+            translations.push_back(translation);
+            timeStamps.push_back(long(timeStamp));
+            
+        } else {
+            printf("Reach end of the SLAMResult dataset!\n");
+            break;
+        }
+    }
 }

@@ -11,26 +11,27 @@ public:
     Frame() = default;
     ~Frame() = default;
     Frame(const cv::Mat& image, double timeStamp = 0);
-    Frame(Frame& frame);
-    void operator=(Frame& frame);
+    Frame(const Frame& frame);
+    void operator=(const Frame& frame);
 
 public:
     std::vector<cv::Mat> mImgPyr;
     std::vector<std::vector<cv::KeyPoint> > mKpsPyr;
     std::vector<std::vector<float> > mDepthPyr;
-
-public:
     float mScaleFactor;
     double mTimeStamp;
     cv::Mat mR;
     cv::Mat mt;
 
 public:
-    void ExtractFASTPyr();
+    void ExtractFastPyr();
+    void ExtractSlopePyr(int threshold);
     void InitDepthPyr(float initDepth);
 
+    cv::Mat GetDoubleSE3();
+
 public: // for debug and display
-    void ShowPyr();
+    void ShowPyr(int levelShow);
 
 };
 
