@@ -177,13 +177,63 @@ CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o.provides: CMakeFiles/DirectSLAM.
 CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o
 
 
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o: ../src/Viewer.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o -c /home/rokid/projects/DirectSLAM/src/Viewer.cc
+
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DirectSLAM.dir/src/Viewer.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rokid/projects/DirectSLAM/src/Viewer.cc > CMakeFiles/DirectSLAM.dir/src/Viewer.cc.i
+
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DirectSLAM.dir/src/Viewer.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rokid/projects/DirectSLAM/src/Viewer.cc -o CMakeFiles/DirectSLAM.dir/src/Viewer.cc.s
+
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.requires:
+
+.PHONY : CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.requires
+
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.provides: CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.requires
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.provides.build
+.PHONY : CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.provides
+
+CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o
+
+
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o: ../src/Statistic.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o -c /home/rokid/projects/DirectSLAM/src/Statistic.cc
+
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DirectSLAM.dir/src/Statistic.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rokid/projects/DirectSLAM/src/Statistic.cc > CMakeFiles/DirectSLAM.dir/src/Statistic.cc.i
+
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DirectSLAM.dir/src/Statistic.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rokid/projects/DirectSLAM/src/Statistic.cc -o CMakeFiles/DirectSLAM.dir/src/Statistic.cc.s
+
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.requires:
+
+.PHONY : CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.requires
+
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.provides: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.requires
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.provides.build
+.PHONY : CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.provides
+
+CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o
+
+
 # Object files for target DirectSLAM
 DirectSLAM_OBJECTS = \
 "CMakeFiles/DirectSLAM.dir/src/Log.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/Frame.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o" \
-"CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
+"CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o" \
+"CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o" \
+"CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
 
 # External object files for target DirectSLAM
 DirectSLAM_EXTERNAL_OBJECTS =
@@ -193,6 +243,8 @@ DirectSLAM_EXTERNAL_OBJECTS =
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Frame.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o
+../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o
+../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/build.make
 ../lib/libDirectSLAM.so: /opt/ros/kinetic/lib/libopencv_stitching3.so.3.2.0
 ../lib/libDirectSLAM.so: /opt/ros/kinetic/lib/libopencv_superres3.so.3.2.0
@@ -270,7 +322,7 @@ DirectSLAM_EXTERNAL_OBJECTS =
 ../lib/libDirectSLAM.so: /usr/lib/x86_64-linux-gnu/librt.so
 ../lib/libDirectSLAM.so: /usr/lib/x86_64-linux-gnu/libcxsparse.so
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX shared library ../lib/libDirectSLAM.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX shared library ../lib/libDirectSLAM.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/DirectSLAM.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -283,6 +335,8 @@ CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/CameraIntrinsi
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Frame.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o.requires
+CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.requires
+CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.requires
 
 .PHONY : CMakeFiles/DirectSLAM.dir/requires
 

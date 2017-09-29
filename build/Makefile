@@ -338,6 +338,60 @@ src/Optimization.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Optimization.cc.s
 .PHONY : src/Optimization.cc.s
 
+src/Statistic.o: src/Statistic.cc.o
+
+.PHONY : src/Statistic.o
+
+# target to build an object file
+src/Statistic.cc.o:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o
+.PHONY : src/Statistic.cc.o
+
+src/Statistic.i: src/Statistic.cc.i
+
+.PHONY : src/Statistic.i
+
+# target to preprocess a source file
+src/Statistic.cc.i:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Statistic.cc.i
+.PHONY : src/Statistic.cc.i
+
+src/Statistic.s: src/Statistic.cc.s
+
+.PHONY : src/Statistic.s
+
+# target to generate assembly for a file
+src/Statistic.cc.s:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Statistic.cc.s
+.PHONY : src/Statistic.cc.s
+
+src/Viewer.o: src/Viewer.cc.o
+
+.PHONY : src/Viewer.o
+
+# target to build an object file
+src/Viewer.cc.o:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o
+.PHONY : src/Viewer.cc.o
+
+src/Viewer.i: src/Viewer.cc.i
+
+.PHONY : src/Viewer.i
+
+# target to preprocess a source file
+src/Viewer.cc.i:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Viewer.cc.i
+.PHONY : src/Viewer.cc.i
+
+src/Viewer.s: src/Viewer.cc.s
+
+.PHONY : src/Viewer.s
+
+# target to generate assembly for a file
+src/Viewer.cc.s:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Viewer.cc.s
+.PHONY : src/Viewer.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -370,6 +424,12 @@ help:
 	@echo "... src/Optimization.o"
 	@echo "... src/Optimization.i"
 	@echo "... src/Optimization.s"
+	@echo "... src/Statistic.o"
+	@echo "... src/Statistic.i"
+	@echo "... src/Statistic.s"
+	@echo "... src/Viewer.o"
+	@echo "... src/Viewer.i"
+	@echo "... src/Viewer.s"
 .PHONY : help
 
 

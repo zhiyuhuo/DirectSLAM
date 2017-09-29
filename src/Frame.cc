@@ -28,12 +28,18 @@ Frame::Frame(const Frame& frame)
     for (int i = 0; i < frame.mImgPyr.size(); i++) {
         mImgPyr[i] = frame.mImgPyr[i].clone();
     }
-    mKpsPyr      = frame.mKpsPyr;
-    mDepthPyr    = frame.mDepthPyr;
-    mScaleFactor = frame.mScaleFactor;
-    mTimeStamp   = frame.mTimeStamp;
-    mR           = frame.mR.clone();
-    mt           = frame.mt.clone(); 
+    mKpsPyr       = frame.mKpsPyr;
+    mDepthPyr     = frame.mDepthPyr;
+    mStatisticPyr = frame.mStatisticPyr;
+    mScaleFactor  = frame.mScaleFactor;
+    mTimeStamp    = frame.mTimeStamp;
+    mR            = frame.mR.clone();
+    mt            = frame.mt.clone(); 
+}
+
+void ExtractAllPixels()
+{
+
 }
 
 void Frame::ExtractFastPyr()
@@ -42,7 +48,7 @@ void Frame::ExtractFastPyr()
     for (int i = 0; i < mImgPyr.size(); i++) {
         std::vector<cv::KeyPoint> keypoints;
         cv::FAST(mImgPyr[i](cv::Rect(mImgPyr[i].cols/4, mImgPyr[i].rows/4, mImgPyr[i].cols/2, mImgPyr[i].rows/2)), 
-                            keypoints, 20, true, cv::FastFeatureDetector::TYPE_9_16);
+                            keypoints, 7, false, cv::FastFeatureDetector::TYPE_9_16);
         for (int j = 0; j < keypoints.size(); j++) {
             keypoints[j].pt = keypoints[j].pt + cv::Point2f(mImgPyr[i].cols/4, mImgPyr[i].rows/4);
             keypoints[j].octave = i;
@@ -51,7 +57,7 @@ void Frame::ExtractFastPyr()
     }
 }
 
-void Frame::ExtractSlopePyr(int threshold)
+void Frame::ExtractGradientPyr(int threshold)
 {
     mKpsPyr.resize(mImgPyr.size());
     cv::Mat Gu = (cv::Mat_<float>(3,3) << -1,  0,  1, -2, 0, 2, -1, 0, 1);
@@ -88,9 +94,12 @@ void Frame::ExtractSlopePyr(int threshold)
 void Frame::InitDepthPyr(float initDepth)
 {
     mDepthPyr.resize(mKpsPyr.size());
+    mStatisticPyr.resize(mKpsPyr.size());
     for (int i = 0; i < mImgPyr.size(); i++) {
         std::vector<float> depth(mKpsPyr[i].size(), initDepth);
+        std::vector<Statistic> statistic(mKpsPyr[i].size());
         mDepthPyr[i] = depth;
+        mStatisticPyr[i] = statistic;
     }
 }
 
@@ -105,6 +114,18 @@ cv::Mat Frame::GetDoubleSE3()
     return res;
 }
 
+cv::Mat Frame::GetTcwMat()
+{
+    if (mR.empty() || mt.empty() )
+        return cv::Mat::eye(4, 4, CV_32FC1);
+
+    cv::Mat res = cv::Mat::eye(4, 4, CV_32FC1);
+    cv::Mat Rt = mR.t();
+    cv::Mat _t = -Rt*mt;
+    Rt.copyTo(res.rowRange(0,3).colRange(0,3));
+    _t.copyTo(res.rowRange(0,3).col(3));
+    return res;
+}
 
 void Frame::ShowPyr(int levelShow)
 {
@@ -147,11 +168,12 @@ void Frame::operator=(const Frame& frame)
     for (int i = 0; i < frame.mImgPyr.size(); i++) {
         mImgPyr[i] = frame.mImgPyr[i].clone();
     }
-    mKpsPyr      = frame.mKpsPyr;
-    mDepthPyr    = frame.mDepthPyr;
-    mScaleFactor = frame.mScaleFactor;
-    mTimeStamp   = frame.mTimeStamp;
-    mR           = frame.mR.clone();
-    mt           = frame.mt.clone();
+    mKpsPyr       = frame.mKpsPyr;
+    mDepthPyr     = frame.mDepthPyr;
+    mStatisticPyr = frame.mStatisticPyr;
+    mScaleFactor  = frame.mScaleFactor;
+    mTimeStamp    = frame.mTimeStamp;
+    mR            = frame.mR.clone();
+    mt            = frame.mt.clone();
 }
 

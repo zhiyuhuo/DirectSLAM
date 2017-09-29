@@ -56,6 +56,8 @@ add_library(${PROJECT_NAME} SHARED
 	src/Frame.cc
 	src/DirectVO.cc
 	src/Optimization.cc
+	src/Viewer.cc
+	src/Statistic.cc
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -9,6 +9,7 @@
 #include <zconf.h>
 #include "Frame.h"
 #include "DirectVO.h"
+#include "Viewer.h"
 
 using namespace std;
 
@@ -59,17 +60,25 @@ int main(int argc, char** argv)
     /*-------- SLAM System --------*/
     // TO DO
     CameraIntrinsic* K = new CameraIntrinsic(argv[1]);
-    DirectVO dvo(K);
+    DirectVO*    pDVO = new DirectVO(K);
+    Viewer*   pViewer = new Viewer(pDVO);
+    std::thread* ptViewer = new std::thread(&Viewer::run, pViewer);
+    ptViewer->detach();
 
     char cmd = ' ';
     bool started = false;
     bool callAlgorithm = false;
     
     int nImg = 0;
+    
     while (true) {
         img_input = cv::imread(imgFiles[nImg].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
         double timeStamp = double(imgTimeStamps[nImg]);
         std::vector<float> imu = GetImuTSforImage(imgTimeStamps[nImg], imuVecs, imuTimeStamps);
+
+        if (nImg == 0) {
+            pDVO->TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+        }
 
         if (cmd == 's') {
             if (started) {
@@ -79,17 +88,14 @@ int main(int argc, char** argv)
             }
         } else {                                
             if (started) {
-                if (nImg == 0) {
-                    dvo.TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
-                }
 
-                if (!callAlgorithm && resTransVecs[nImg][0] == 0 && resTransVecs[nImg+1][0] != 0) {
-                    dvo.TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                if (!callAlgorithm && resTransVecs[nImg-1][0] == 0 && resTransVecs[nImg][0] != 0) {
+                    pDVO->TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
                     callAlgorithm = true;
                     // cv::destroyWindow("img_input");
                 } else {
                     if (callAlgorithm) {
-                        dvo.TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                        pDVO->TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
                     }
                 }
                 cv::imshow("img_input", img_input);
@@ -99,6 +105,7 @@ int main(int argc, char** argv)
         }
 
         if (cmd == 'q') {
+            pViewer->Stop();
             break;
         }
 

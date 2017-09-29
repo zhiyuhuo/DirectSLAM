@@ -5,6 +5,7 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 #include "Log.h"
+#include "Statistic.h"
 
 class Frame {
 public:
@@ -18,17 +19,20 @@ public:
     std::vector<cv::Mat> mImgPyr;
     std::vector<std::vector<cv::KeyPoint> > mKpsPyr;
     std::vector<std::vector<float> > mDepthPyr;
+    std::vector<std::vector<Statistic> > mStatisticPyr;
     float mScaleFactor;
     double mTimeStamp;
     cv::Mat mR;
     cv::Mat mt;
 
 public:
+    void ExtractAllPixels();
     void ExtractFastPyr();
-    void ExtractSlopePyr(int threshold);
+    void ExtractGradientPyr(int threshold);
     void InitDepthPyr(float initDepth);
 
     cv::Mat GetDoubleSE3();
+    cv::Mat GetTcwMat();
 
 public: // for debug and display
     void ShowPyr(int levelShow);

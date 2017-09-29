@@ -24,6 +24,8 @@ public: // constructors and destructors
     DirectVO(CameraIntrinsic* K);
 
 public: // members
+    int mLevel;
+    int mFrameNum;
     CameraIntrinsic* mK;
     TrackingState     mState;
 
@@ -35,10 +37,13 @@ public: // functions
     bool AddObvFrame(Frame& f);
     TrackingState TrackMono(cv::Mat image, std::vector<float> R_, std::vector<float> t_);
 
-    bool BatchOptimizeSE3Depth(int levelNum);
+    bool BatchOptimizeSE3Depth();
     
+    float GetReprojectionPhotometricError(Frame& ref, Frame& f, cv::Point2f p_ref, float d_ref);
+    void  CheckErrorForDistances();
     void CheckReprojection(Frame& ref, Frame& f);
     void ShowDepth(Frame& f);
+    double GetPatchIntense(float u, float v, int width, unsigned char* image);
 };
 
 #endif

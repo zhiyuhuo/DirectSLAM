@@ -9,6 +9,8 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rokid/projects/DirectSLAM/src/Frame.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Frame.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Log.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Log.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Optimization.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
+  "/home/rokid/projects/DirectSLAM/src/Statistic.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
+  "/home/rokid/projects/DirectSLAM/src/Viewer.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

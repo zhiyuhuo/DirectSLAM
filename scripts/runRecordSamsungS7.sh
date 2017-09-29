@@ -1,1 +1,1 @@
-sudo ../bin/appPlayDataset ../configs/calibration_samsungs7.txt /home/rokid/Pictures/slam_database/samsungs7_8/rgb.txt /home/rokid/Pictures/slam_database/samsungs7_8/imu_data.txt /home/rokid/Pictures/slam_database/samsungs7_8/SLAMResults.txt ../test/config.yaml
+sudo ../bin/appPlayDataset ../configs/calibration_samsungs7.txt /home/rokid/Pictures/slam_database/samsungs7_3/rgb.txt /home/rokid/Pictures/slam_database/samsungs7_3/imu_data.txt /home/rokid/Pictures/slam_database/samsungs7_3/SLAMResults.txt ../test/config.yaml

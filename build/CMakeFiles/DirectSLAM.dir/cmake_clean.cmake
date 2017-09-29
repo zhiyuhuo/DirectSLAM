@@ -4,6 +4,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/DirectSLAM.dir/src/Frame.cc.o"
   "CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o"
   "CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
+  "CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o"
+  "CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
   "../lib/libDirectSLAM.pdb"
   "../lib/libDirectSLAM.so"
 )
