@@ -1,6 +1,6 @@
 #include "DirectVO.h" 
 #define LEVEL 1
-#define FRAMENUM 5
+#define FRAMENUM 30
 
 DirectVO::DirectVO(CameraIntrinsic* K)
 {

@@ -69,5 +69,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/DirectSLAM.dir/DependInfo.cmake"
   "CMakeFiles/appDSLAM.dir/DependInfo.cmake"
+  "CMakeFiles/appTestHomographyPlaneRecognization.dir/DependInfo.cmake"
   "CMakeFiles/appPlayDataset.dir/DependInfo.cmake"
   )

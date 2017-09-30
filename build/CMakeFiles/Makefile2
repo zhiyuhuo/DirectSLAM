@@ -66,7 +66,7 @@ CMAKE_BINARY_DIR = /home/rokid/projects/DirectSLAM/build
 CMakeFiles/DirectSLAM.dir/all:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/depend
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target DirectSLAM"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target DirectSLAM"
 .PHONY : CMakeFiles/DirectSLAM.dir/all
 
 # Include target in all.
@@ -76,7 +76,7 @@ all: CMakeFiles/DirectSLAM.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/DirectSLAM.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 8
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 9
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/DirectSLAM.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 0
 .PHONY : CMakeFiles/DirectSLAM.dir/rule
@@ -103,7 +103,7 @@ clean: CMakeFiles/DirectSLAM.dir/clean
 CMakeFiles/appDSLAM.dir/all: CMakeFiles/DirectSLAM.dir/all
 	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/depend
 	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=9,10 "Built target appDSLAM"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=10,11 "Built target appDSLAM"
 .PHONY : CMakeFiles/appDSLAM.dir/all
 
 # Include target in all.
@@ -113,7 +113,7 @@ all: CMakeFiles/appDSLAM.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/appDSLAM.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 10
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 11
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/appDSLAM.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 0
 .PHONY : CMakeFiles/appDSLAM.dir/rule
@@ -134,13 +134,50 @@ clean: CMakeFiles/appDSLAM.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/appTestHomographyPlaneRecognization.dir
+
+# All Build rule for target.
+CMakeFiles/appTestHomographyPlaneRecognization.dir/all: CMakeFiles/DirectSLAM.dir/all
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/depend
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=14,15 "Built target appTestHomographyPlaneRecognization"
+.PHONY : CMakeFiles/appTestHomographyPlaneRecognization.dir/all
+
+# Include target in all.
+all: CMakeFiles/appTestHomographyPlaneRecognization.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/appTestHomographyPlaneRecognization.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 11
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/appTestHomographyPlaneRecognization.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 0
+.PHONY : CMakeFiles/appTestHomographyPlaneRecognization.dir/rule
+
+# Convenience name for target.
+appTestHomographyPlaneRecognization: CMakeFiles/appTestHomographyPlaneRecognization.dir/rule
+
+.PHONY : appTestHomographyPlaneRecognization
+
+# clean rule for target.
+CMakeFiles/appTestHomographyPlaneRecognization.dir/clean:
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/clean
+.PHONY : CMakeFiles/appTestHomographyPlaneRecognization.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/appTestHomographyPlaneRecognization.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/appPlayDataset.dir
 
 # All Build rule for target.
 CMakeFiles/appPlayDataset.dir/all: CMakeFiles/DirectSLAM.dir/all
 	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/depend
 	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=11,12 "Built target appPlayDataset"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=12,13 "Built target appPlayDataset"
 .PHONY : CMakeFiles/appPlayDataset.dir/all
 
 # Include target in all.
@@ -150,7 +187,7 @@ all: CMakeFiles/appPlayDataset.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/appPlayDataset.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 10
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 11
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/appPlayDataset.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rokid/projects/DirectSLAM/build/CMakeFiles 0
 .PHONY : CMakeFiles/appPlayDataset.dir/rule

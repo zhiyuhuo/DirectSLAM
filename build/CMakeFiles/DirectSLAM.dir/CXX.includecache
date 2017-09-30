@@ -44,6 +44,24 @@ Log.h
 Statistic.h
 ../include/Statistic.h
 
+../include/HomographyPlaneDetector.h
+iostream
+-
+string
+-
+opencv2/opencv.hpp
+-
+Log.h
+../include/Log.h
+Timer.h
+../include/Timer.h
+CameraIntrinsic.h
+../include/CameraIntrinsic.h
+Frame.h
+../include/Frame.h
+Optimization.h
+../include/Optimization.h
+
 ../include/Log.h
 spdlog/spdlog.h
 ../include/spdlog/spdlog.h
@@ -627,6 +645,10 @@ DirectVO.h
 /home/rokid/projects/DirectSLAM/src/Frame.cc
 Frame.h
 /home/rokid/projects/DirectSLAM/src/Frame.h
+
+/home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.cc
+HomographyPlaneDetector.h
+/home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.h
 
 /home/rokid/projects/DirectSLAM/src/Log.cc
 Log.h

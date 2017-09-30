@@ -91,6 +91,47 @@ void Frame::ExtractGradientPyr(int threshold)
     }   
 }
 
+void Frame::ExtractFeaturePoint()
+{
+    mKpsPyr.resize(mImgPyr.size());
+    for (int i = 0; i < mImgPyr.size(); i++) {
+        std::vector<cv::KeyPoint> keypoints;
+        ExtractFeaturePointOnLevel(mImgPyr[i], keypoints, i);
+        mKpsPyr[i] = keypoints;
+    }
+}
+
+void Frame::ExtractFeaturePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level)
+{
+    int threshold_low = 10;
+    int threshold_high = 30;
+    cv::Mat edge = cv::Mat::zeros(image.rows, image.cols, CV_8UC1);
+    cv::Canny(image, edge, threshold_low, threshold_high);
+    // cv::imshow("canny edge", edge);
+    std::vector<cv::Point2f> pts;
+    for (int v = 0; v < image.rows; v++) {
+        for (int u = 0; u < image.cols; u++) {
+            if (  v > image.rows / 8 && v < image.rows * 7/8 
+               && u > image.cols / 8 && u < image.cols * 7/8) {
+                if (edge.data[u + v*image.cols] > 0) {
+                    pts.push_back(cv::Point2f(u, v));
+                }
+            }
+        }
+    }
+
+    std::vector<float> grad_megs = GetGradientMagnitude(image, pts);
+    std::vector<cv::Point2f> pts_nms = NMSMaskOnCannyEdge(image, pts, grad_megs);
+    std::vector<float> grad_megs_nms = GetGradientMagnitude(image, pts_nms);
+    keypoints.resize(pts_nms.size());
+    for (int i = 0; i < keypoints.size(); i++) {
+        keypoints[i].pt = pts_nms[i];
+        keypoints[i].response = grad_megs_nms[i];
+        keypoints[i].octave = level;
+    }
+
+}
+
 void Frame::InitDepthPyr(float initDepth)
 {
     mDepthPyr.resize(mKpsPyr.size());
@@ -133,6 +174,11 @@ void Frame::ShowPyr(int levelShow)
     int LEVELSHOW = levelShow;
     cv::Mat img4Show = mImgPyr[LEVELSHOW].clone();
     cv::cvtColor(img4Show, img4Show, CV_GRAY2BGR);
+
+    if (mKpsPyr.size() < LEVELSHOW) {
+        return ;
+    }
+
     for (int i = LEVELSHOW; i < LEVELSHOW+1; i++) {
         for (int j = 0; j < mKpsPyr[i].size(); j++) {
             cv::Scalar color;
@@ -175,5 +221,81 @@ void Frame::operator=(const Frame& frame)
     mTimeStamp    = frame.mTimeStamp;
     mR            = frame.mR.clone();
     mt            = frame.mt.clone();
+}
+
+std::vector<float> Frame::GetGradientMagnitude(cv::Mat image, std::vector<cv::Point2f> pts)
+{
+    std::vector<float> res(pts.size(), 0);
+    cv::Mat imagef;
+    image.convertTo(imagef, CV_32FC1);
+    cv::Mat Gu = (cv::Mat_<float>(3,3) << -1,  0,  1, -2, 0, 2, -1, 0, 1);
+    cv::Mat Gv = (cv::Mat_<float>(3,3) << -1, -2, -1,  0, 0, 0,  1, 2, 1);
+
+    int    u,  v;
+    float gu, gv;
+    for (int i = 0; i < pts.size(); i++) {
+        u = int(pts[i].x + 0.5);
+        v = int(pts[i].y + 0.5);
+        gu = float(cv::sum(imagef(cv::Rect(u, v, 3, 3)).mul(Gu))[0]);
+        gv = float(cv::sum(imagef(cv::Rect(u, v, 3, 3)).mul(Gv))[0]);
+        res[i] = sqrt(gu*gu + gv*gv);
+
+        // std::cout << i << " " << res[i] << std::endl;
+    }
+
+    return res;
+}
+
+std::vector<cv::Point2f> Frame::NMSMaskOnCannyEdge(cv::Mat image, const std::vector<cv::Point2f>& edge_points, const std::vector<float>& gradient_mags)
+{
+    std::vector<int>  mask(image.cols*image.rows, -1);
+    int* pmask = (int*)mask.data();
+    std::vector<bool> ifSuppressed(edge_points.size(), false); 
+    std::vector<cv::Point2f> edge_points_afternms;
+
+    for (int i = 0; i < edge_points.size(); i++) {
+        pmask[int(edge_points[i].y+0.5) * image.cols + int(edge_points[i].x+0.5)] = i;
+    }
+
+    int R = image.cols / 100;
+    int idx = 0;
+    int u, v;
+    for (int i = 0; i < edge_points.size(); i++) {
+        if (!ifSuppressed[i]) {
+            for (int dv = -R; dv <= R; dv++) {
+                for (int du = -R; du <= R; du++) {
+                    if (du*du + dv*dv < R*R ) {
+                        u = int(edge_points[i].x+0.5);
+                        v = int(edge_points[i].y+0.5);
+                        idx = pmask[(dv + v)*image.cols + du + u];
+                        if  ( idx >= 0) {
+                            // std::cout << i << " " << u << " " << v << " " << du << " " << dv << " " 
+                            //           << gradient_mags[i] << " " << idx << " " << gradient_mags[idx] << std::endl;
+                            if (gradient_mags[i] > gradient_mags[idx]) {
+                                ifSuppressed[idx] = true;
+                            } 
+                            else if (gradient_mags[i] < gradient_mags[idx]) {
+                                ifSuppressed[i] = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    int count = 0;
+    for (int i = 0; i < edge_points.size(); i++) {
+        if (!ifSuppressed[i]) {
+            edge_points_afternms.push_back(edge_points[i]);
+            continue;
+        }
+    }
+
+    std::cout << "num of points before and after nms: " << edge_points.size() << " " << edge_points_afternms.size() << std::endl;
+
+    return edge_points_afternms;
 }
 

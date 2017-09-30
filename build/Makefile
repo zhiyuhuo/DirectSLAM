@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/rokid/projects/DirectSLAM/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -77,6 +66,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -135,6 +135,19 @@ appDSLAM: cmake_check_build_system
 appDSLAM/fast:
 	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/build
 .PHONY : appDSLAM/fast
+
+#=============================================================================
+# Target rules for targets named appTestHomographyPlaneRecognization
+
+# Build rule for target.
+appTestHomographyPlaneRecognization: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 appTestHomographyPlaneRecognization
+.PHONY : appTestHomographyPlaneRecognization
+
+# fast build rule for target.
+appTestHomographyPlaneRecognization/fast:
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/build
+.PHONY : appTestHomographyPlaneRecognization/fast
 
 #=============================================================================
 # Target rules for targets named appPlayDataset
@@ -202,6 +215,33 @@ app/appPlayDataset.s: app/appPlayDataset.cc.s
 app/appPlayDataset.cc.s:
 	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/app/appPlayDataset.cc.s
 .PHONY : app/appPlayDataset.cc.s
+
+app/appTestHomographyPlaneRecognization.o: app/appTestHomographyPlaneRecognization.cc.o
+
+.PHONY : app/appTestHomographyPlaneRecognization.o
+
+# target to build an object file
+app/appTestHomographyPlaneRecognization.cc.o:
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/app/appTestHomographyPlaneRecognization.cc.o
+.PHONY : app/appTestHomographyPlaneRecognization.cc.o
+
+app/appTestHomographyPlaneRecognization.i: app/appTestHomographyPlaneRecognization.cc.i
+
+.PHONY : app/appTestHomographyPlaneRecognization.i
+
+# target to preprocess a source file
+app/appTestHomographyPlaneRecognization.cc.i:
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/app/appTestHomographyPlaneRecognization.cc.i
+.PHONY : app/appTestHomographyPlaneRecognization.cc.i
+
+app/appTestHomographyPlaneRecognization.s: app/appTestHomographyPlaneRecognization.cc.s
+
+.PHONY : app/appTestHomographyPlaneRecognization.s
+
+# target to generate assembly for a file
+app/appTestHomographyPlaneRecognization.cc.s:
+	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/app/appTestHomographyPlaneRecognization.cc.s
+.PHONY : app/appTestHomographyPlaneRecognization.cc.s
 
 src/CameraIntrinsic.o: src/CameraIntrinsic.cc.o
 
@@ -283,6 +323,33 @@ src/Frame.s: src/Frame.cc.s
 src/Frame.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Frame.cc.s
 .PHONY : src/Frame.cc.s
+
+src/HomographyPlaneDetector.o: src/HomographyPlaneDetector.cc.o
+
+.PHONY : src/HomographyPlaneDetector.o
+
+# target to build an object file
+src/HomographyPlaneDetector.cc.o:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o
+.PHONY : src/HomographyPlaneDetector.cc.o
+
+src/HomographyPlaneDetector.i: src/HomographyPlaneDetector.cc.i
+
+.PHONY : src/HomographyPlaneDetector.i
+
+# target to preprocess a source file
+src/HomographyPlaneDetector.cc.i:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.i
+.PHONY : src/HomographyPlaneDetector.cc.i
+
+src/HomographyPlaneDetector.s: src/HomographyPlaneDetector.cc.s
+
+.PHONY : src/HomographyPlaneDetector.s
+
+# target to generate assembly for a file
+src/HomographyPlaneDetector.cc.s:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.s
+.PHONY : src/HomographyPlaneDetector.cc.s
 
 src/Log.o: src/Log.cc.o
 
@@ -398,10 +465,11 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... DirectSLAM"
 	@echo "... appDSLAM"
-	@echo "... rebuild_cache"
+	@echo "... appTestHomographyPlaneRecognization"
 	@echo "... appPlayDataset"
 	@echo "... app/appDSLAM.o"
 	@echo "... app/appDSLAM.i"
@@ -409,6 +477,9 @@ help:
 	@echo "... app/appPlayDataset.o"
 	@echo "... app/appPlayDataset.i"
 	@echo "... app/appPlayDataset.s"
+	@echo "... app/appTestHomographyPlaneRecognization.o"
+	@echo "... app/appTestHomographyPlaneRecognization.i"
+	@echo "... app/appTestHomographyPlaneRecognization.s"
 	@echo "... src/CameraIntrinsic.o"
 	@echo "... src/CameraIntrinsic.i"
 	@echo "... src/CameraIntrinsic.s"
@@ -418,6 +489,9 @@ help:
 	@echo "... src/Frame.o"
 	@echo "... src/Frame.i"
 	@echo "... src/Frame.s"
+	@echo "... src/HomographyPlaneDetector.o"
+	@echo "... src/HomographyPlaneDetector.i"
+	@echo "... src/HomographyPlaneDetector.s"
 	@echo "... src/Log.o"
 	@echo "... src/Log.i"
 	@echo "... src/Log.s"

@@ -58,6 +58,7 @@ add_library(${PROJECT_NAME} SHARED
 	src/Optimization.cc
 	src/Viewer.cc
 	src/Statistic.cc
+	src/HomographyPlaneDetector.cc
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -77,4 +78,7 @@ target_link_libraries(appDSLAM loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
 
 add_executable(appPlayDataset app/appPlayDataset.cc)
 target_link_libraries(appPlayDataset loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
+
+add_executable(appTestHomographyPlaneRecognization app/appTestHomographyPlaneRecognization.cc)
+target_link_libraries(appTestHomographyPlaneRecognization loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
     
