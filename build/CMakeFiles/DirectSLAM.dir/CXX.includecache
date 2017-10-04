@@ -14,24 +14,6 @@ fstream
 sstream
 -
 
-../include/DirectVO.h
-iostream
--
-string
--
-opencv2/opencv.hpp
--
-Log.h
-../include/Log.h
-Timer.h
-../include/Timer.h
-CameraIntrinsic.h
-../include/CameraIntrinsic.h
-Frame.h
-../include/Frame.h
-Optimization.h
-../include/Optimization.h
-
 ../include/Frame.h
 iostream
 -
@@ -43,24 +25,6 @@ Log.h
 ../include/Log.h
 Statistic.h
 ../include/Statistic.h
-
-../include/HomographyPlaneDetector.h
-iostream
--
-string
--
-opencv2/opencv.hpp
--
-Log.h
-../include/Log.h
-Timer.h
-../include/Timer.h
-CameraIntrinsic.h
-../include/CameraIntrinsic.h
-Frame.h
-../include/Frame.h
-Optimization.h
-../include/Optimization.h
 
 ../include/Log.h
 spdlog/spdlog.h
@@ -102,6 +66,24 @@ Log.h
 Timer.h
 ../include/Timer.h
 
+../include/PlaneDetector.h
+iostream
+-
+string
+-
+opencv2/opencv.hpp
+-
+Log.h
+../include/Log.h
+Timer.h
+../include/Timer.h
+CameraIntrinsic.h
+../include/CameraIntrinsic.h
+Frame.h
+../include/Frame.h
+TextureSegment.h
+../include/TextureSegment.h
+
 ../include/Statistic.h
 stdio.h
 -
@@ -112,6 +94,14 @@ math.h
 iostream
 -
 vector
+-
+
+../include/TextureSegment.h
+iostream
+-
+string
+-
+opencv2/opencv.hpp
 -
 
 ../include/Timer.h
@@ -139,8 +129,8 @@ pangolin/pangolin.h
 -
 mutex
 -
-DirectVO.h
-../include/DirectVO.h
+PlaneDetector.h
+../include/PlaneDetector.h
 
 ../thirdparty/spdlog/async_logger.h
 spdlog/common.h
@@ -638,17 +628,9 @@ CameraIntrinsic.h
 Log.h
 /home/rokid/projects/DirectSLAM/src/Log.h
 
-/home/rokid/projects/DirectSLAM/src/DirectVO.cc
-DirectVO.h
-/home/rokid/projects/DirectSLAM/src/DirectVO.h
-
 /home/rokid/projects/DirectSLAM/src/Frame.cc
 Frame.h
 /home/rokid/projects/DirectSLAM/src/Frame.h
-
-/home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.cc
-HomographyPlaneDetector.h
-/home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.h
 
 /home/rokid/projects/DirectSLAM/src/Log.cc
 Log.h
@@ -658,9 +640,17 @@ Log.h
 Optimization.h
 /home/rokid/projects/DirectSLAM/src/Optimization.h
 
+/home/rokid/projects/DirectSLAM/src/PlaneDetector.cc
+PlaneDetector.h
+/home/rokid/projects/DirectSLAM/src/PlaneDetector.h
+
 /home/rokid/projects/DirectSLAM/src/Statistic.cc
 Statistic.h
 /home/rokid/projects/DirectSLAM/src/Statistic.h
+
+/home/rokid/projects/DirectSLAM/src/TextureSegment.cc
+TextureSegment.h
+/home/rokid/projects/DirectSLAM/src/TextureSegment.h
 
 /home/rokid/projects/DirectSLAM/src/Viewer.cc
 Viewer.h

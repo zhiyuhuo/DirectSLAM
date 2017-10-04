@@ -12,7 +12,7 @@
 
 #include <mutex>
 
-#include "DirectVO.h"
+#include "PlaneDetector.h"
 
 class ImageFrame;
 class CameraIntrinsic;
@@ -21,7 +21,7 @@ class Viewer
 {
     public:
         Viewer() = default;
-        Viewer(DirectVO* _dvo): dvo(_dvo), isFinished(false) {};
+        Viewer(PlaneDetector* _pd): pd(_pd), isFinished(false) {};
 
         // 3D Drawing
         void run();
@@ -34,7 +34,7 @@ class Viewer
 
 
     private:
-        DirectVO* dvo;
+        PlaneDetector* pd;
 
         std::mutex mMutexFinish;
         bool isFinished;

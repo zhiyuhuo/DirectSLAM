@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/rokid/projects/DirectSLAM/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -77,6 +66,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -124,124 +124,84 @@ DirectSLAM/fast:
 .PHONY : DirectSLAM/fast
 
 #=============================================================================
-# Target rules for targets named appDSLAM
+# Target rules for targets named patent
 
 # Build rule for target.
-appDSLAM: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 appDSLAM
-.PHONY : appDSLAM
+patent: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 patent
+.PHONY : patent
 
 # fast build rule for target.
-appDSLAM/fast:
-	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/build
-.PHONY : appDSLAM/fast
+patent/fast:
+	$(MAKE) -f CMakeFiles/patent.dir/build.make CMakeFiles/patent.dir/build
+.PHONY : patent/fast
 
 #=============================================================================
-# Target rules for targets named appTestHomographyPlaneRecognization
+# Target rules for targets named appTestHomographyTextureBayesPlaneRecognization
 
 # Build rule for target.
-appTestHomographyPlaneRecognization: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 appTestHomographyPlaneRecognization
-.PHONY : appTestHomographyPlaneRecognization
+appTestHomographyTextureBayesPlaneRecognization: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 appTestHomographyTextureBayesPlaneRecognization
+.PHONY : appTestHomographyTextureBayesPlaneRecognization
 
 # fast build rule for target.
-appTestHomographyPlaneRecognization/fast:
-	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/build
-.PHONY : appTestHomographyPlaneRecognization/fast
+appTestHomographyTextureBayesPlaneRecognization/fast:
+	$(MAKE) -f CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build
+.PHONY : appTestHomographyTextureBayesPlaneRecognization/fast
 
-#=============================================================================
-# Target rules for targets named appPlayDataset
+app/appTestHomographyTextureBayesPlaneRecognization.o: app/appTestHomographyTextureBayesPlaneRecognization.cc.o
 
-# Build rule for target.
-appPlayDataset: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 appPlayDataset
-.PHONY : appPlayDataset
-
-# fast build rule for target.
-appPlayDataset/fast:
-	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/build
-.PHONY : appPlayDataset/fast
-
-app/appDSLAM.o: app/appDSLAM.cc.o
-
-.PHONY : app/appDSLAM.o
+.PHONY : app/appTestHomographyTextureBayesPlaneRecognization.o
 
 # target to build an object file
-app/appDSLAM.cc.o:
-	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/app/appDSLAM.cc.o
-.PHONY : app/appDSLAM.cc.o
+app/appTestHomographyTextureBayesPlaneRecognization.cc.o:
+	$(MAKE) -f CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o
+.PHONY : app/appTestHomographyTextureBayesPlaneRecognization.cc.o
 
-app/appDSLAM.i: app/appDSLAM.cc.i
+app/appTestHomographyTextureBayesPlaneRecognization.i: app/appTestHomographyTextureBayesPlaneRecognization.cc.i
 
-.PHONY : app/appDSLAM.i
+.PHONY : app/appTestHomographyTextureBayesPlaneRecognization.i
 
 # target to preprocess a source file
-app/appDSLAM.cc.i:
-	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/app/appDSLAM.cc.i
-.PHONY : app/appDSLAM.cc.i
+app/appTestHomographyTextureBayesPlaneRecognization.cc.i:
+	$(MAKE) -f CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.i
+.PHONY : app/appTestHomographyTextureBayesPlaneRecognization.cc.i
 
-app/appDSLAM.s: app/appDSLAM.cc.s
+app/appTestHomographyTextureBayesPlaneRecognization.s: app/appTestHomographyTextureBayesPlaneRecognization.cc.s
 
-.PHONY : app/appDSLAM.s
+.PHONY : app/appTestHomographyTextureBayesPlaneRecognization.s
 
 # target to generate assembly for a file
-app/appDSLAM.cc.s:
-	$(MAKE) -f CMakeFiles/appDSLAM.dir/build.make CMakeFiles/appDSLAM.dir/app/appDSLAM.cc.s
-.PHONY : app/appDSLAM.cc.s
+app/appTestHomographyTextureBayesPlaneRecognization.cc.s:
+	$(MAKE) -f CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.s
+.PHONY : app/appTestHomographyTextureBayesPlaneRecognization.cc.s
 
-app/appPlayDataset.o: app/appPlayDataset.cc.o
+app/patent.o: app/patent.cc.o
 
-.PHONY : app/appPlayDataset.o
+.PHONY : app/patent.o
 
 # target to build an object file
-app/appPlayDataset.cc.o:
-	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/app/appPlayDataset.cc.o
-.PHONY : app/appPlayDataset.cc.o
+app/patent.cc.o:
+	$(MAKE) -f CMakeFiles/patent.dir/build.make CMakeFiles/patent.dir/app/patent.cc.o
+.PHONY : app/patent.cc.o
 
-app/appPlayDataset.i: app/appPlayDataset.cc.i
+app/patent.i: app/patent.cc.i
 
-.PHONY : app/appPlayDataset.i
-
-# target to preprocess a source file
-app/appPlayDataset.cc.i:
-	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/app/appPlayDataset.cc.i
-.PHONY : app/appPlayDataset.cc.i
-
-app/appPlayDataset.s: app/appPlayDataset.cc.s
-
-.PHONY : app/appPlayDataset.s
-
-# target to generate assembly for a file
-app/appPlayDataset.cc.s:
-	$(MAKE) -f CMakeFiles/appPlayDataset.dir/build.make CMakeFiles/appPlayDataset.dir/app/appPlayDataset.cc.s
-.PHONY : app/appPlayDataset.cc.s
-
-app/appTestHomographyPlaneRecognization.o: app/appTestHomographyPlaneRecognization.cc.o
-
-.PHONY : app/appTestHomographyPlaneRecognization.o
-
-# target to build an object file
-app/appTestHomographyPlaneRecognization.cc.o:
-	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/app/appTestHomographyPlaneRecognization.cc.o
-.PHONY : app/appTestHomographyPlaneRecognization.cc.o
-
-app/appTestHomographyPlaneRecognization.i: app/appTestHomographyPlaneRecognization.cc.i
-
-.PHONY : app/appTestHomographyPlaneRecognization.i
+.PHONY : app/patent.i
 
 # target to preprocess a source file
-app/appTestHomographyPlaneRecognization.cc.i:
-	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/app/appTestHomographyPlaneRecognization.cc.i
-.PHONY : app/appTestHomographyPlaneRecognization.cc.i
+app/patent.cc.i:
+	$(MAKE) -f CMakeFiles/patent.dir/build.make CMakeFiles/patent.dir/app/patent.cc.i
+.PHONY : app/patent.cc.i
 
-app/appTestHomographyPlaneRecognization.s: app/appTestHomographyPlaneRecognization.cc.s
+app/patent.s: app/patent.cc.s
 
-.PHONY : app/appTestHomographyPlaneRecognization.s
+.PHONY : app/patent.s
 
 # target to generate assembly for a file
-app/appTestHomographyPlaneRecognization.cc.s:
-	$(MAKE) -f CMakeFiles/appTestHomographyPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyPlaneRecognization.dir/app/appTestHomographyPlaneRecognization.cc.s
-.PHONY : app/appTestHomographyPlaneRecognization.cc.s
+app/patent.cc.s:
+	$(MAKE) -f CMakeFiles/patent.dir/build.make CMakeFiles/patent.dir/app/patent.cc.s
+.PHONY : app/patent.cc.s
 
 src/CameraIntrinsic.o: src/CameraIntrinsic.cc.o
 
@@ -270,33 +230,6 @@ src/CameraIntrinsic.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.s
 .PHONY : src/CameraIntrinsic.cc.s
 
-src/DirectVO.o: src/DirectVO.cc.o
-
-.PHONY : src/DirectVO.o
-
-# target to build an object file
-src/DirectVO.cc.o:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o
-.PHONY : src/DirectVO.cc.o
-
-src/DirectVO.i: src/DirectVO.cc.i
-
-.PHONY : src/DirectVO.i
-
-# target to preprocess a source file
-src/DirectVO.cc.i:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.i
-.PHONY : src/DirectVO.cc.i
-
-src/DirectVO.s: src/DirectVO.cc.s
-
-.PHONY : src/DirectVO.s
-
-# target to generate assembly for a file
-src/DirectVO.cc.s:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.s
-.PHONY : src/DirectVO.cc.s
-
 src/Frame.o: src/Frame.cc.o
 
 .PHONY : src/Frame.o
@@ -323,33 +256,6 @@ src/Frame.s: src/Frame.cc.s
 src/Frame.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Frame.cc.s
 .PHONY : src/Frame.cc.s
-
-src/HomographyPlaneDetector.o: src/HomographyPlaneDetector.cc.o
-
-.PHONY : src/HomographyPlaneDetector.o
-
-# target to build an object file
-src/HomographyPlaneDetector.cc.o:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o
-.PHONY : src/HomographyPlaneDetector.cc.o
-
-src/HomographyPlaneDetector.i: src/HomographyPlaneDetector.cc.i
-
-.PHONY : src/HomographyPlaneDetector.i
-
-# target to preprocess a source file
-src/HomographyPlaneDetector.cc.i:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.i
-.PHONY : src/HomographyPlaneDetector.cc.i
-
-src/HomographyPlaneDetector.s: src/HomographyPlaneDetector.cc.s
-
-.PHONY : src/HomographyPlaneDetector.s
-
-# target to generate assembly for a file
-src/HomographyPlaneDetector.cc.s:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.s
-.PHONY : src/HomographyPlaneDetector.cc.s
 
 src/Log.o: src/Log.cc.o
 
@@ -405,6 +311,33 @@ src/Optimization.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Optimization.cc.s
 .PHONY : src/Optimization.cc.s
 
+src/PlaneDetector.o: src/PlaneDetector.cc.o
+
+.PHONY : src/PlaneDetector.o
+
+# target to build an object file
+src/PlaneDetector.cc.o:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o
+.PHONY : src/PlaneDetector.cc.o
+
+src/PlaneDetector.i: src/PlaneDetector.cc.i
+
+.PHONY : src/PlaneDetector.i
+
+# target to preprocess a source file
+src/PlaneDetector.cc.i:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.i
+.PHONY : src/PlaneDetector.cc.i
+
+src/PlaneDetector.s: src/PlaneDetector.cc.s
+
+.PHONY : src/PlaneDetector.s
+
+# target to generate assembly for a file
+src/PlaneDetector.cc.s:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.s
+.PHONY : src/PlaneDetector.cc.s
+
 src/Statistic.o: src/Statistic.cc.o
 
 .PHONY : src/Statistic.o
@@ -431,6 +364,33 @@ src/Statistic.s: src/Statistic.cc.s
 src/Statistic.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Statistic.cc.s
 .PHONY : src/Statistic.cc.s
+
+src/TextureSegment.o: src/TextureSegment.cc.o
+
+.PHONY : src/TextureSegment.o
+
+# target to build an object file
+src/TextureSegment.cc.o:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o
+.PHONY : src/TextureSegment.cc.o
+
+src/TextureSegment.i: src/TextureSegment.cc.i
+
+.PHONY : src/TextureSegment.i
+
+# target to preprocess a source file
+src/TextureSegment.cc.i:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.i
+.PHONY : src/TextureSegment.cc.i
+
+src/TextureSegment.s: src/TextureSegment.cc.s
+
+.PHONY : src/TextureSegment.s
+
+# target to generate assembly for a file
+src/TextureSegment.cc.s:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.s
+.PHONY : src/TextureSegment.cc.s
 
 src/Viewer.o: src/Viewer.cc.o
 
@@ -465,42 +425,38 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... DirectSLAM"
-	@echo "... appDSLAM"
-	@echo "... appTestHomographyPlaneRecognization"
-	@echo "... appPlayDataset"
-	@echo "... app/appDSLAM.o"
-	@echo "... app/appDSLAM.i"
-	@echo "... app/appDSLAM.s"
-	@echo "... app/appPlayDataset.o"
-	@echo "... app/appPlayDataset.i"
-	@echo "... app/appPlayDataset.s"
-	@echo "... app/appTestHomographyPlaneRecognization.o"
-	@echo "... app/appTestHomographyPlaneRecognization.i"
-	@echo "... app/appTestHomographyPlaneRecognization.s"
+	@echo "... patent"
+	@echo "... appTestHomographyTextureBayesPlaneRecognization"
+	@echo "... rebuild_cache"
+	@echo "... app/appTestHomographyTextureBayesPlaneRecognization.o"
+	@echo "... app/appTestHomographyTextureBayesPlaneRecognization.i"
+	@echo "... app/appTestHomographyTextureBayesPlaneRecognization.s"
+	@echo "... app/patent.o"
+	@echo "... app/patent.i"
+	@echo "... app/patent.s"
 	@echo "... src/CameraIntrinsic.o"
 	@echo "... src/CameraIntrinsic.i"
 	@echo "... src/CameraIntrinsic.s"
-	@echo "... src/DirectVO.o"
-	@echo "... src/DirectVO.i"
-	@echo "... src/DirectVO.s"
 	@echo "... src/Frame.o"
 	@echo "... src/Frame.i"
 	@echo "... src/Frame.s"
-	@echo "... src/HomographyPlaneDetector.o"
-	@echo "... src/HomographyPlaneDetector.i"
-	@echo "... src/HomographyPlaneDetector.s"
 	@echo "... src/Log.o"
 	@echo "... src/Log.i"
 	@echo "... src/Log.s"
 	@echo "... src/Optimization.o"
 	@echo "... src/Optimization.i"
 	@echo "... src/Optimization.s"
+	@echo "... src/PlaneDetector.o"
+	@echo "... src/PlaneDetector.i"
+	@echo "... src/PlaneDetector.s"
 	@echo "... src/Statistic.o"
 	@echo "... src/Statistic.i"
 	@echo "... src/Statistic.s"
+	@echo "... src/TextureSegment.o"
+	@echo "... src/TextureSegment.i"
+	@echo "... src/TextureSegment.s"
 	@echo "... src/Viewer.o"
 	@echo "... src/Viewer.i"
 	@echo "... src/Viewer.s"

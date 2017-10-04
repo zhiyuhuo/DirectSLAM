@@ -1,1 +1,1 @@
-sudo ../bin/appTestHomographyPlaneRecognization ../configs/calibration_samsungs7.txt /home/rokid/Pictures/slam_database/samsungs7_10/rgb.txt /home/rokid/Pictures/slam_database/samsungs7_10/imu_data.txt /home/rokid/Pictures/slam_database/samsungs7_10/SLAMResults.txt ../test/config.yaml
+sudo ../bin/appTestHomographyTextureBayesPlaneRecognization ../configs/calibration_samsungs7.txt /home/rokid/Pictures/slam_database/samsungs7_5/rgb.txt /home/rokid/Pictures/slam_database/samsungs7_5/imu_data.txt /home/rokid/Pictures/slam_database/samsungs7_5/SLAMResults.txt ../app/config.yaml

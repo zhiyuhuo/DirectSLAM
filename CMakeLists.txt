@@ -54,11 +54,11 @@ add_library(${PROJECT_NAME} SHARED
 	src/Log.cc
 	src/CameraIntrinsic.cc
 	src/Frame.cc
-	src/DirectVO.cc
 	src/Optimization.cc
 	src/Viewer.cc
 	src/Statistic.cc
-	src/HomographyPlaneDetector.cc
+	src/PlaneDetector.cc
+	src/TextureSegment.cc
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -73,12 +73,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 link_directories(${CERES_LIBRARY})
 link_directories("/home/rokid/Loitor_VI_Sensor_SDK_V1.3.1/SDK/src")
 
-add_executable(appDSLAM app/appDSLAM.cc)
-target_link_libraries(appDSLAM loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
+add_executable(appTestHomographyTextureBayesPlaneRecognization app/appTestHomographyTextureBayesPlaneRecognization.cc)
+target_link_libraries(appTestHomographyTextureBayesPlaneRecognization loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
 
-add_executable(appPlayDataset app/appPlayDataset.cc)
-target_link_libraries(appPlayDataset loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
-
-add_executable(appTestHomographyPlaneRecognization app/appTestHomographyPlaneRecognization.cc)
-target_link_libraries(appTestHomographyPlaneRecognization loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )
+add_executable(patent app/patent.cc)
+target_link_libraries(patent ${PROJECT_NAME} )
     

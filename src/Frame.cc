@@ -37,71 +37,52 @@ Frame::Frame(const Frame& frame)
     mt            = frame.mt.clone(); 
 }
 
-void ExtractAllPixels()
-{
-
-}
-
-void Frame::ExtractFastPyr()
-{
-    mKpsPyr.resize(mImgPyr.size());
-    for (int i = 0; i < mImgPyr.size(); i++) {
-        std::vector<cv::KeyPoint> keypoints;
-        cv::FAST(mImgPyr[i](cv::Rect(mImgPyr[i].cols/4, mImgPyr[i].rows/4, mImgPyr[i].cols/2, mImgPyr[i].rows/2)), 
-                            keypoints, 7, false, cv::FastFeatureDetector::TYPE_9_16);
-        for (int j = 0; j < keypoints.size(); j++) {
-            keypoints[j].pt = keypoints[j].pt + cv::Point2f(mImgPyr[i].cols/4, mImgPyr[i].rows/4);
-            keypoints[j].octave = i;
-        }
-        mKpsPyr[i] = keypoints;
-    }
-}
-
-void Frame::ExtractGradientPyr(int threshold)
-{
-    mKpsPyr.resize(mImgPyr.size());
-    cv::Mat Gu = (cv::Mat_<float>(3,3) << -1,  0,  1, -2, 0, 2, -1, 0, 1);
-    cv::Mat Gv = (cv::Mat_<float>(3,3) << -1, -2, -1,  0, 0, 0,  1, 2, 1);
-    float gu, gv, mag;
-    for (int i = 0; i < mImgPyr.size(); i++) {
-        std::vector<cv::KeyPoint> keypoints;
-        // cv::FAST(mImgPyr[i](cv::Rect(mImgPyr[i].cols/4, mImgPyr[i].rows/4, mImgPyr[i].cols/2, mImgPyr[i].rows/2)), 
-        //                     keypoints, 20, true, cv::FastFeatureDetector::TYPE_9_16);
-
-        cv::Mat imagef;
-        mImgPyr[i].convertTo(imagef, CV_32FC1);
-        for (int v = 0; v < mImgPyr[i].rows; v++) {
-            for (int u = 0; u < mImgPyr[i].cols; u++) {
-                if (u < mImgPyr[i].cols/8 || u > mImgPyr[i].cols*7/8 || v < mImgPyr[i].rows/8 || v > mImgPyr[i].rows*7/8)
-                    continue;
-                    
-                gu = float(cv::sum(imagef(cv::Rect(u-1, v-1, 3, 3)).mul(Gu))[0]);
-                gv = float(cv::sum(imagef(cv::Rect(u-1, v-1, 3, 3)).mul(Gv))[0]);
-                mag = sqrt(gu*gu + gv*gv);
-                if (mag > threshold) {
-                    keypoints.push_back(cv::KeyPoint(float(u), float(v), 1, atan2(gv, gu), mag));
-                }
-            }
-        }
-
-        for (int j = 0; j < keypoints.size(); j++) {
-            keypoints[j].octave = i;
-        }
-        mKpsPyr[i] = keypoints;
-    }   
-}
-
 void Frame::ExtractFeaturePoint()
 {
     mKpsPyr.resize(mImgPyr.size());
     for (int i = 0; i < mImgPyr.size(); i++) {
-        std::vector<cv::KeyPoint> keypoints;
-        ExtractFeaturePointOnLevel(mImgPyr[i], keypoints, i);
+        std::vector<cv::KeyPoint> keypoints, keypoints_fast, keypoints_edge;
+        std::vector<bool> ifGetNMS_fast, ifGetNMS_edge;
+
+        ExtractFastPointOnLevel(mImgPyr[i], keypoints_fast, i);
+        keypoints_fast = NMSMask(mImgPyr[i], keypoints_fast, ifGetNMS_fast);
+
+        ExtractEdgePointOnLevel(mImgPyr[i], keypoints_edge, i);
+        keypoints_edge = NMSMask(mImgPyr[i], keypoints_edge, ifGetNMS_edge);
+
+        keypoints.insert(keypoints.end(), keypoints_fast.begin(), keypoints_fast.end());
+        keypoints.insert(keypoints.end(), keypoints_edge.begin(), keypoints_edge.end());
+
+        // for (int i = 0; i < keypoints.size(); i++) {
+        //     std::cout << keypoints[i].class_id << " " << keypoints[i].response << " " << std::endl;
+        // }
+
         mKpsPyr[i] = keypoints;
     }
 }
 
-void Frame::ExtractFeaturePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level)
+void Frame::ExtractFastPointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level)
+{
+    int fastThreshold = 20 - 3*level;
+    if (fastThreshold < 5) {
+        fastThreshold = 5;
+    }
+
+    std::vector<cv::KeyPoint> kps;
+    cv::FAST(image(cv::Rect(image.cols/8, image.rows/8, image.cols*6/8,image.rows*6/8)), 
+                        kps, fastThreshold, false, cv::FastFeatureDetector::TYPE_9_16);
+    for (int i = 0; i < kps.size(); i++) {
+        kps[i].pt = kps[i].pt + cv::Point2f(image.cols/8, image.rows/8);
+        kps[i].octave = level;
+        kps[i].class_id = 1;
+    }
+    ComputeResponses(image, kps, fastThreshold);
+    for (int i = 0; i < kps.size(); i++) {
+        keypoints.push_back(kps[i]);
+    }
+}
+
+void Frame::ExtractEdgePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level)
 {
     int threshold_low = 10;
     int threshold_high = 30;
@@ -121,26 +102,15 @@ void Frame::ExtractFeaturePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>&
     }
 
     std::vector<float> grad_megs = GetGradientMagnitude(image, pts);
-    std::vector<cv::Point2f> pts_nms = NMSMaskOnCannyEdge(image, pts, grad_megs);
-    std::vector<float> grad_megs_nms = GetGradientMagnitude(image, pts_nms);
-    keypoints.resize(pts_nms.size());
-    for (int i = 0; i < keypoints.size(); i++) {
-        keypoints[i].pt = pts_nms[i];
-        keypoints[i].response = grad_megs_nms[i];
-        keypoints[i].octave = level;
+    std::vector<cv::KeyPoint> kps(pts.size());
+    for (int i = 0; i < kps.size(); i++) {
+        kps[i].pt = pts[i];
+        kps[i].response = grad_megs[i];
+        kps[i].octave = level;
+        kps[i].class_id = 2;
     }
-
-}
-
-void Frame::InitDepthPyr(float initDepth)
-{
-    mDepthPyr.resize(mKpsPyr.size());
-    mStatisticPyr.resize(mKpsPyr.size());
-    for (int i = 0; i < mImgPyr.size(); i++) {
-        std::vector<float> depth(mKpsPyr[i].size(), initDepth);
-        std::vector<Statistic> statistic(mKpsPyr[i].size());
-        mDepthPyr[i] = depth;
-        mStatisticPyr[i] = statistic;
+    for (int i = 0; i < kps.size(); i++) {
+        keypoints.push_back(kps[i]);
     }
 }
 
@@ -149,8 +119,8 @@ cv::Mat Frame::GetDoubleSE3()
     cv::Mat so3 = cv::Mat::zeros(3, 1, CV_64FC1);
     cv::Rodrigues(mR, so3);
     cv::Mat res = ( cv::Mat_<double>(6,1) 
-        << double(so3.at<float>(0,0)), double(so3.at<float>(1,0)), double(so3.at<float>(2,0)), 
-           double(mt.at<float>(0,0)), double(mt.at<float>(1,0)), double(mt.at<float>(2,0)) );
+                    << double(so3.at<float>(0,0)), double(so3.at<float>(1,0)), double(so3.at<float>(2,0)), 
+                    double(mt.at<float>(0,0)), double(mt.at<float>(1,0)), double(mt.at<float>(2,0)) );
 
     return res;
 }
@@ -182,7 +152,7 @@ void Frame::ShowPyr(int levelShow)
     for (int i = LEVELSHOW; i < LEVELSHOW+1; i++) {
         for (int j = 0; j < mKpsPyr[i].size(); j++) {
             cv::Scalar color;
-            switch (mKpsPyr[i][j].octave) {
+            switch (mKpsPyr[i][j].class_id) {
                 case 3: color = cv::Scalar(231, 255, 0); break;
                 case 2: color = cv::Scalar(255, 219, 0); break;
                 case 1: color = cv::Scalar(255, 113, 0); break;
@@ -236,8 +206,8 @@ std::vector<float> Frame::GetGradientMagnitude(cv::Mat image, std::vector<cv::Po
     for (int i = 0; i < pts.size(); i++) {
         u = int(pts[i].x + 0.5);
         v = int(pts[i].y + 0.5);
-        gu = float(cv::sum(imagef(cv::Rect(u, v, 3, 3)).mul(Gu))[0]);
-        gv = float(cv::sum(imagef(cv::Rect(u, v, 3, 3)).mul(Gv))[0]);
+        gu = float(cv::sum(imagef(cv::Rect(u, v, 3, 3)).mul(Gu))[0]) * 0.5;
+        gv = float(cv::sum(imagef(cv::Rect(u, v, 3, 3)).mul(Gv))[0]) * 0.5;
         res[i] = sqrt(gu*gu + gv*gv);
 
         // std::cout << i << " " << res[i] << std::endl;
@@ -246,35 +216,80 @@ std::vector<float> Frame::GetGradientMagnitude(cv::Mat image, std::vector<cv::Po
     return res;
 }
 
-std::vector<cv::Point2f> Frame::NMSMaskOnCannyEdge(cv::Mat image, const std::vector<cv::Point2f>& edge_points, const std::vector<float>& gradient_mags)
+void Frame::ComputeResponses(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int FASTThres) 
+{
+    if (keypoints.size() == 0) 
+        return;
+
+    std::vector<float> responses(keypoints.size());
+
+    int offset[16];
+    int fast_ring16_x[16] = {0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1};
+    int fast_ring16_y[16] = {3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1, 0, 1, 2, 3};
+
+    for (int i = 0; i < 16; ++i) {
+        offset[i] = fast_ring16_y[i]*image.cols + fast_ring16_x[i];
+    }
+
+    for (int i = 0, _end = keypoints.size(); i < _end; ++i) {
+        unsigned char *_data = (unsigned char *)image.data;
+        _data = _data + (int)(keypoints[i].pt.x + keypoints[i].pt.y*image.cols);
+        int cb  = *_data + FASTThres;
+        int c_b = *_data - FASTThres; 
+        int sp = 0, sn = 0;
+
+        for (int j = 0; j < 16; ++j) {
+            int p = _data[offset[j]];
+                
+            if (p > cb)
+                sp += (p-cb);
+            else if (p < c_b)
+                sn += (c_b-p);
+        }
+
+        if (sp > sn)
+            responses[i] = sp / 16;
+        else
+            responses[i] = sn / 16;
+
+    }
+
+    for (int i = 0; i < responses.size(); i++) {
+        keypoints[i].response = responses[i];
+    }
+}
+
+std::vector<cv::KeyPoint> Frame::NMSMask(cv::Mat image, std::vector<cv::KeyPoint>& points, std::vector<bool>& ifGetNMS)
 {
     std::vector<int>  mask(image.cols*image.rows, -1);
     int* pmask = (int*)mask.data();
-    std::vector<bool> ifSuppressed(edge_points.size(), false); 
-    std::vector<cv::Point2f> edge_points_afternms;
+    std::vector<bool> ifSuppressed(points.size(), false); 
 
-    for (int i = 0; i < edge_points.size(); i++) {
-        pmask[int(edge_points[i].y+0.5) * image.cols + int(edge_points[i].x+0.5)] = i;
+    for (int i = 0; i < points.size(); i++) {
+        pmask[int(points[i].pt.y+0.5) * image.cols + int(points[i].pt.x+0.5)] = i;
     }
 
     int R = image.cols / 100;
+    if (R < 1) {
+        R = 1;
+    }
     int idx = 0;
     int u, v;
-    for (int i = 0; i < edge_points.size(); i++) {
+    for (int i = 0; i < points.size(); i++) {
         if (!ifSuppressed[i]) {
             for (int dv = -R; dv <= R; dv++) {
                 for (int du = -R; du <= R; du++) {
                     if (du*du + dv*dv < R*R ) {
-                        u = int(edge_points[i].x+0.5);
-                        v = int(edge_points[i].y+0.5);
+                        u = int(points[i].pt.x+0.5);
+                        v = int(points[i].pt.y+0.5);
                         idx = pmask[(dv + v)*image.cols + du + u];
                         if  ( idx >= 0) {
                             // std::cout << i << " " << u << " " << v << " " << du << " " << dv << " " 
                             //           << gradient_mags[i] << " " << idx << " " << gradient_mags[idx] << std::endl;
-                            if (gradient_mags[i] > gradient_mags[idx]) {
+                            if (points[i].response > points[idx].response) {
                                 ifSuppressed[idx] = true;
                             } 
-                            else if (gradient_mags[i] < gradient_mags[idx]) {
+                            else if (points[i].response < points[idx].response) {
                                 ifSuppressed[i] = true;
                             }
                         }
@@ -286,16 +301,19 @@ std::vector<cv::Point2f> Frame::NMSMaskOnCannyEdge(cv::Mat image, const std::vec
 
     }
 
+    std::vector<cv::KeyPoint> points_afternms;
     int count = 0;
-    for (int i = 0; i < edge_points.size(); i++) {
+    for (int i = 0; i < points.size(); i++) {
+        // std::cout << points[i].class_id << " " << points[i].response << " " << ifSuppressed[i] << std::endl;
         if (!ifSuppressed[i]) {
-            edge_points_afternms.push_back(edge_points[i]);
+            points_afternms.push_back(points[i]);
             continue;
         }
     }
+    ifGetNMS = ifSuppressed;
 
-    std::cout << "num of points before and after nms: " << edge_points.size() << " " << edge_points_afternms.size() << std::endl;
+    // std::cout << "num of points before and after nms: " << ifSuppressed.size() << " " << points_afternms.size() << std::endl;
 
-    return edge_points_afternms;
+    return points_afternms;
 }
 

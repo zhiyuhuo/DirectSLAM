@@ -1,6 +1,5 @@
-/home/rokid/projects/DirectSLAM/build/CMakeFiles/rebuild_cache.dir
 /home/rokid/projects/DirectSLAM/build/CMakeFiles/edit_cache.dir
 /home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir
-/home/rokid/projects/DirectSLAM/build/CMakeFiles/appDSLAM.dir
-/home/rokid/projects/DirectSLAM/build/CMakeFiles/appTestHomographyPlaneRecognization.dir
-/home/rokid/projects/DirectSLAM/build/CMakeFiles/appPlayDataset.dir
+/home/rokid/projects/DirectSLAM/build/CMakeFiles/patent.dir
+/home/rokid/projects/DirectSLAM/build/CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir
+/home/rokid/projects/DirectSLAM/build/CMakeFiles/rebuild_cache.dir

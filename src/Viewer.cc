@@ -61,11 +61,11 @@ void Viewer::drawRefFrame()
     const float h = w*0.75;
     const float z = w*0.6;
 
-    if (dvo == NULL)
+    if (pd == NULL)
         return;
 
-    if (!dvo->mRefFrame.mR.empty()) {
-        cv::Mat Tcw = dvo->mRefFrame.GetTcwMat().t();
+    if (!pd->mRefFrame.mR.empty()) {
+        cv::Mat Tcw = pd->mRefFrame.GetTcwMat().t();
 
         glPushMatrix();
 
@@ -109,12 +109,12 @@ void Viewer::drawFrames()
     const float h = w*0.75;
     const float z = w*0.6;
 
-    if (dvo==NULL)
+    if (pd==NULL)
         return;
 
-    for (int i = 0; i < dvo->mFrameVecBuffer.size(); i++) {
+    for (int i = 0; i < pd->mFrameVecBuffer.size(); i++) {
 
-        cv::Mat Tcw = dvo->mFrameVecBuffer[i].GetTcwMat().t();
+        cv::Mat Tcw = pd->mFrameVecBuffer[i].GetTcwMat().t();
 
         glPushMatrix();
 
@@ -155,42 +155,42 @@ void Viewer::drawFrames()
 
 void Viewer::drawPixelsDepth()
 {
-    if (dvo==NULL || dvo->mRefFrame.mKpsPyr.size() <= dvo->mLevel)
+    if (pd==NULL || pd->mRefFrame.mKpsPyr.size() <= pd->mLevel)
         return;
 
-    int Level = dvo->mLevel;
+    int Level = pd->mLevel;
     glPointSize(3);
     glBegin(GL_POINTS);
 
-    float fx = dvo->mK->fx / pow(dvo->mRefFrame.mScaleFactor, Level);
-    float fy = dvo->mK->fy / pow(dvo->mRefFrame.mScaleFactor, Level);
-    float cx = dvo->mK->cx / pow(dvo->mRefFrame.mScaleFactor, Level);
-    float cy = dvo->mK->cy / pow(dvo->mRefFrame.mScaleFactor, Level);
+    float fx = pd->mK->fx / pow(pd->mRefFrame.mScaleFactor, Level);
+    float fy = pd->mK->fy / pow(pd->mRefFrame.mScaleFactor, Level);
+    float cx = pd->mK->cx / pow(pd->mRefFrame.mScaleFactor, Level);
+    float cy = pd->mK->cy / pow(pd->mRefFrame.mScaleFactor, Level);
 
     // local map
     float x, y, z;
-    for (int i = 0; i < dvo->mRefFrame.mKpsPyr[Level].size(); i++) {
+    for (int i = 0; i < pd->mRefFrame.mKpsPyr[Level].size(); i++) {
         
-        z =  dvo->mRefFrame.mDepthPyr[Level][i];
-        x = (dvo->mRefFrame.mKpsPyr[Level][i].pt.x - cx) * z / fx;
-        y = (dvo->mRefFrame.mKpsPyr[Level][i].pt.y - cy) * z / fy;
+        z =  pd->mRefFrame.mDepthPyr[Level][i];
+        x = (pd->mRefFrame.mKpsPyr[Level][i].pt.x - cx) * z / fx;
+        y = (pd->mRefFrame.mKpsPyr[Level][i].pt.y - cy) * z / fy;
 
         glColor3f(0, 0.f, 0);
         glVertex3f(x, y, z);
 
-        if (dvo->mRefFrame.mStatisticPyr[Level][i].getNum() == dvo->mFrameNum 
-            &&  dvo->mRefFrame.mStatisticPyr[Level][i].getMean() < 5.99
-            &&  dvo->mRefFrame.mStatisticPyr[Level][i].getStdVariance() < 1.99) {
+        if (pd->mRefFrame.mStatisticPyr[Level][i].getNum() == pd->mFrameNum 
+            &&  pd->mRefFrame.mStatisticPyr[Level][i].getMean() < 5.99
+            &&  pd->mRefFrame.mStatisticPyr[Level][i].getStdVariance() < 1.99) {
             // glColor3f(0, 1.f, 0);
             // glVertex3f(x, y, z);
         }
-        else if (dvo->mRefFrame.mStatisticPyr[Level][i].getNum() > dvo->mFrameNum / 2
-        &&  dvo->mRefFrame.mStatisticPyr[Level][i].getMean() < 4.99
-        &&  dvo->mRefFrame.mStatisticPyr[Level][i].getStdVariance() < 2.99) {
+        else if (pd->mRefFrame.mStatisticPyr[Level][i].getNum() > pd->mFrameNum / 2
+        &&  pd->mRefFrame.mStatisticPyr[Level][i].getMean() < 4.99
+        &&  pd->mRefFrame.mStatisticPyr[Level][i].getStdVariance() < 2.99) {
             // glColor3f(.5f, .5f, 0);
             // glVertex3f(x, y, z);
         }
-        else if (dvo->mRefFrame.mStatisticPyr[Level][i].getNum() > dvo->mFrameNum / 10) {
+        else if (pd->mRefFrame.mStatisticPyr[Level][i].getNum() > pd->mFrameNum / 10) {
             // glColor3f(1.f, 0, 0);
             // glVertex3f(x, y, z);
         }

@@ -5,12 +5,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rokid/projects/DirectSLAM/src/CameraIntrinsic.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o"
-  "/home/rokid/projects/DirectSLAM/src/DirectVO.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Frame.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Frame.cc.o"
-  "/home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Log.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Log.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Optimization.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
+  "/home/rokid/projects/DirectSLAM/src/PlaneDetector.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Statistic.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
+  "/home/rokid/projects/DirectSLAM/src/TextureSegment.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Viewer.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

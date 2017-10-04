@@ -129,33 +129,9 @@ CMakeFiles/DirectSLAM.dir/src/Frame.cc.o.provides: CMakeFiles/DirectSLAM.dir/src
 CMakeFiles/DirectSLAM.dir/src/Frame.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/Frame.cc.o
 
 
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o: ../src/DirectVO.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o -c /home/rokid/projects/DirectSLAM/src/DirectVO.cc
-
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rokid/projects/DirectSLAM/src/DirectVO.cc > CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.i
-
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rokid/projects/DirectSLAM/src/DirectVO.cc -o CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.s
-
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.requires:
-
-.PHONY : CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.requires
-
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.provides: CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.requires
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.provides.build
-.PHONY : CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.provides
-
-CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o
-
-
 CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
 CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o: ../src/Optimization.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o -c /home/rokid/projects/DirectSLAM/src/Optimization.cc
 
 CMakeFiles/DirectSLAM.dir/src/Optimization.cc.i: cmake_force
@@ -179,7 +155,7 @@ CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o.provides.build: CMakeFiles/Direc
 
 CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
 CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o: ../src/Viewer.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o -c /home/rokid/projects/DirectSLAM/src/Viewer.cc
 
 CMakeFiles/DirectSLAM.dir/src/Viewer.cc.i: cmake_force
@@ -203,7 +179,7 @@ CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.provides.build: CMakeFiles/DirectSLAM.
 
 CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
 CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o: ../src/Statistic.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o -c /home/rokid/projects/DirectSLAM/src/Statistic.cc
 
 CMakeFiles/DirectSLAM.dir/src/Statistic.cc.i: cmake_force
@@ -225,28 +201,52 @@ CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.provides: CMakeFiles/DirectSLAM.dir
 CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o
 
 
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o: ../src/HomographyPlaneDetector.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o -c /home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.cc
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o: ../src/PlaneDetector.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o -c /home/rokid/projects/DirectSLAM/src/PlaneDetector.cc
 
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.cc > CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.i
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rokid/projects/DirectSLAM/src/PlaneDetector.cc > CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.i
 
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rokid/projects/DirectSLAM/src/HomographyPlaneDetector.cc -o CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.s
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rokid/projects/DirectSLAM/src/PlaneDetector.cc -o CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.s
 
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.requires:
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.requires:
 
-.PHONY : CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.requires
+.PHONY : CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.requires
 
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.provides: CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.requires
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.provides.build
-.PHONY : CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.provides
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.provides: CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.requires
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.provides.build
+.PHONY : CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.provides
 
-CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o
+CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o
+
+
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o: CMakeFiles/DirectSLAM.dir/flags.make
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o: ../src/TextureSegment.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rokid/projects/DirectSLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o -c /home/rokid/projects/DirectSLAM/src/TextureSegment.cc
+
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rokid/projects/DirectSLAM/src/TextureSegment.cc > CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.i
+
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rokid/projects/DirectSLAM/src/TextureSegment.cc -o CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.s
+
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.requires:
+
+.PHONY : CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.requires
+
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.provides: CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.requires
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.provides.build
+.PHONY : CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.provides
+
+CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.provides.build: CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o
 
 
 # Object files for target DirectSLAM
@@ -254,11 +254,11 @@ DirectSLAM_OBJECTS = \
 "CMakeFiles/DirectSLAM.dir/src/Log.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/Frame.cc.o" \
-"CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o" \
 "CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o" \
-"CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o"
+"CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o" \
+"CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o"
 
 # External object files for target DirectSLAM
 DirectSLAM_EXTERNAL_OBJECTS =
@@ -266,11 +266,11 @@ DirectSLAM_EXTERNAL_OBJECTS =
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Log.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Frame.cc.o
-../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o
-../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o
+../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o
+../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o
 ../lib/libDirectSLAM.so: CMakeFiles/DirectSLAM.dir/build.make
 ../lib/libDirectSLAM.so: /opt/ros/kinetic/lib/libopencv_stitching3.so.3.2.0
 ../lib/libDirectSLAM.so: /opt/ros/kinetic/lib/libopencv_superres3.so.3.2.0
@@ -359,11 +359,11 @@ CMakeFiles/DirectSLAM.dir/build: ../lib/libDirectSLAM.so
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Log.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Frame.cc.o.requires
-CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/DirectVO.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o.requires
 CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/Statistic.cc.o.requires
-CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/HomographyPlaneDetector.cc.o.requires
+CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o.requires
+CMakeFiles/DirectSLAM.dir/requires: CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o.requires
 
 .PHONY : CMakeFiles/DirectSLAM.dir/requires
 

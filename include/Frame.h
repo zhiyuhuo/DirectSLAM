@@ -26,15 +26,13 @@ public:
     cv::Mat mt;
 
 public:
-    void ExtractAllPixels();
-    void ExtractFastPyr();
-    void ExtractGradientPyr(int threshold);
     void ExtractFeaturePoint();
-    void ExtractFeaturePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level);
-    void InitDepthPyr(float initDepth);
+    void ExtractFastPointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level);
+    void ExtractEdgePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int level);
 
     std::vector<float> GetGradientMagnitude(cv::Mat image, std::vector<cv::Point2f> pts);
-    std::vector<cv::Point2f> NMSMaskOnCannyEdge(cv::Mat image, const std::vector<cv::Point2f>& edge_points, const std::vector<float>& gradient_mags);
+    void ComputeResponses(cv::Mat image, std::vector<cv::KeyPoint>& keypoints, int FASTThres);
+    std::vector<cv::KeyPoint> NMSMask(cv::Mat image, std::vector<cv::KeyPoint>& points, std::vector<bool>& ifGetNMS);
 
     cv::Mat GetDoubleSE3();
     cv::Mat GetTcwMat();

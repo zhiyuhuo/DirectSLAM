@@ -1,0 +1,1 @@
+sudo ../bin/patent ../configs/calibration_samsungs7.txt /home/rokid/Pictures/slam_database/samsungs7_9/rgb.txt /home/rokid/Pictures/slam_database/samsungs7_9/imu_data.txt /home/rokid/Pictures/slam_database/samsungs7_9/SLAMResults.txt ../app/config.yaml
