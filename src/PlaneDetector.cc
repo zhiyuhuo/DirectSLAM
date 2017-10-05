@@ -37,7 +37,7 @@ PlaneDetectionState PlaneDetector::Detect(cv::Mat image, std::vector<float> R_, 
     if (mState == PlaneDetectionState::VOID) {
         SetRefFrame(f);
         TIME_BEGIN();
-        mTextureSeg.InitData(mRefFrame.mImgPyr[mLevel], 20, 20);
+        mTextureSeg.InitData(mRefFrame.mImgPyr[mLevel], 30, 30);
         mTextureSeg.ComputeGridFeatures();
         TIME_END("Segment Ref Frame Image ");
         mState = PlaneDetectionState::INITIALIZING;
@@ -297,7 +297,7 @@ cv::Mat PlaneDetector::CalculateConditionalDistribution_SurfaceGrid(std::vector<
     cv::Mat p_surface_grid = cv::Mat::zeros(mTextureSeg.mTextureMap.cols*mTextureSeg.mTextureMap.rows, 2, CV_32FC1);
 
     std::vector<cv::Point2f> pts = ptsMatchHMat;
-    float R = cv::norm(cv::Point2f(mTextureSeg.mGridX/2, mTextureSeg.mGridY/2));
+    float R = 0.36 * cv::norm(cv::Point2f(mTextureSeg.mGridX/2, mTextureSeg.mGridY/2));
 
     for (int y = 0; y < mTextureSeg.mTextureMap.rows; y++) {
         for (int x = 0; x < mTextureSeg.mTextureMap.cols; x++) {
@@ -305,7 +305,7 @@ cv::Mat PlaneDetector::CalculateConditionalDistribution_SurfaceGrid(std::vector<
             cv::Point2f cGrid(x*mTextureSeg.mGridX + mTextureSeg.mGridX/2, y*mTextureSeg.mGridY+mTextureSeg.mGridY/2);
             float d, score = 0.0;
             for (int i = 0; i < pts.size(); i++) {
-                d = cv::norm(pts[i] - cGrid)/(1.5*R);
+                d = cv::norm(pts[i] - cGrid)/R;
                 if (std::exp(-d) > score) {
                     score = std::exp(-d/R);
                 }
@@ -333,9 +333,12 @@ cv::Mat PlaneDetector::CalculateConditionalDistribution_SurfaceTexture(cv::Mat F
 {   
     cv::Mat p_surface_texture = cv::Mat::zeros(mTextureSeg.mTextureID+1, 2, CV_32FC1);
 
-    std::cout << F_S_G.size() << F_T_G.size() << std::endl;
+    std::cout << F_S_G << std::endl << F_T_G << std::endl;
 
-    p_surface_texture = (F_S_G.t() * F_T_G) / (mTextureSeg.mGridX * mTextureSeg.mGridY);
+    p_surface_texture = (F_S_G.t() * F_T_G);
+
+    p_surface_texture.row(0) = p_surface_texture.row(0) / cv::sum(p_surface_texture.row(0)).val[0];
+    p_surface_texture.row(1) = p_surface_texture.row(1) / cv::sum(p_surface_texture.row(1)).val[0];
 
     std::cout << p_surface_texture << std::endl;
 
