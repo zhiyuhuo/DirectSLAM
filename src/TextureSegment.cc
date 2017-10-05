@@ -42,11 +42,11 @@ void TextureSegment::InitData(cv::Mat image, int gridX, int gridY)
     mGridY = gridY;
     mGridNumX = image.cols / mGridX;
     mGridNumY = image.rows / mGridY;
-    mPatchFeatures.resize(mGridNumY);
+    mGridGaborFeatures.resize(mGridNumY);
     mTextureMap = cv::Mat(mGridNumY, mGridNumX, CV_32SC1);
     mGrayScaleMap = cv::Mat(mGridNumY, mGridNumX, CV_32FC1);
     for (int i = 0; i < mGridNumY; i++) {
-        mPatchFeatures[i].resize(mGridNumX);
+        mGridGaborFeatures[i].resize(mGridNumX);
         for (int j = 0; j < mGridNumX; j++) {
             mTextureMap.at<int>(i, j) = i * mGridNumX + j;
         }
@@ -54,27 +54,27 @@ void TextureSegment::InitData(cv::Mat image, int gridX, int gridY)
     InitGaborFilters();
 }
 
-void TextureSegment::ComputePatchFeatures()
+void TextureSegment::ComputeGridFeatures()
 {
     // cv::imshow("mImage", mImage);
     // std::cout << mGridX << " " << mGridY << " " << mGridNumX << " " << mGridNumY << std::endl;
-    // std::cout << mPatchFeatures.size() << " " << mPatchFeatures[0].size() << std::endl;
+    // std::cout << mGridGaborFeatures.size() << " " << mGridGaborFeatures[0].size() << std::endl;
     for (int v = 0; v <= mImage.rows - mGridY; v+=mGridY) {
         for (int u = 0; u <= mImage.cols - mGridX; u+=mGridX) {
             // std::cout << v << " " << u << " " << v/mGridY << " " << u/mGridX << std::endl;
             cv::Mat patch = mImage(cv::Rect(u, v, mGridX, mGridY));
             // cv::imshow("patch", patch);
-            cv::Mat f = ComputeAPatchFeature(patch);
-            mPatchFeatures[v/mGridY][u/mGridX] = f.clone();
+            cv::Mat f = ComputeAGridFeature(patch);
+            mGridGaborFeatures[v/mGridY][u/mGridX] = f.clone();
 
             mGrayScaleMap.at<float>(v/mGridY, u/mGridX) = (cv::mean(patch)).val[0] * (1/255.);
             // cv::waitKey(-1);
         }
     }
-    ConnectSimilarPatches();
+    ConnectSimilarGrids();
 }
 
-cv::Mat TextureSegment::ComputeAPatchFeature(cv::Mat img)
+cv::Mat TextureSegment::ComputeAGridFeature(cv::Mat img)
 {
     cv::Mat res(mGaborFilters.size(), 1, CV_32FC1);
     float* pres = res.ptr<float>(0);
@@ -105,28 +105,28 @@ cv::Mat TextureSegment::ComputeAPatchFeature(cv::Mat img)
 
     for (int i = 0; i < res.rows; i++) {
         pres[i] /= count;
-        std::cout << std::setprecision(3) << pres[i] << " ";
-    }   std::cout << std::endl;
+        // std::cout << std::setprecision(3) << pres[i] << " ";
+    }   // std::cout << std::endl;
 
     // std::cout << res.t() << std::endl;
     return res;
 }
 
-cv::Mat TextureSegment::ConnectSimilarPatches()
+cv::Mat TextureSegment::ConnectSimilarGrids()
 {
     float Threshold = 3.0;
     int IterMax = 30;
 
     bool ifConverge = false;
-    for (int y = 1; y < mGridNumY-1; y++) {
-        for (int x = 1; x < mGridNumX-1; x++) {
-            std::cout << x << ", " << y << "    "
-                    << cv::norm(mPatchFeatures[y][x], mPatchFeatures[y+1][x]) << " "
-                    << cv::norm(mPatchFeatures[y][x], mPatchFeatures[y-1][x]) << " "
-                    << cv::norm(mPatchFeatures[y][x], mPatchFeatures[y][x+1]) << " "
-                    << cv::norm(mPatchFeatures[y][x], mPatchFeatures[y][x-1]) << std::endl;        
-        }
-    }
+    // for (int y = 1; y < mGridNumY-1; y++) {
+    //     for (int x = 1; x < mGridNumX-1; x++) {
+    //         std::cout << x << ", " << y << "    "
+    //                 << cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+1][x]) << " "
+    //                 << cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y-1][x]) << " "
+    //                 << cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y][x+1]) << " "
+    //                 << cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y][x-1]) << std::endl;        
+    //     }
+    // }
 
     // generate 12 seeds aroung the center of the view
     std::vector<cv::Point2i> seeds = {  cv::Point2i(mGridNumX/2-7, mGridNumY/2-5), 
@@ -149,7 +149,7 @@ cv::Mat TextureSegment::ConnectSimilarPatches()
     classIDSeeds[0] = 0;
     for (int i = 1; i < seeds.size(); i++) {
         for (int j = 0; j < i; j++) {
-            if ( cv::norm(mPatchFeatures[seeds[j].y][seeds[j].x], mPatchFeatures[seeds[i].y][seeds[i].x]) < Threshold
+            if ( cv::norm(mGridGaborFeatures[seeds[j].y][seeds[j].x], mGridGaborFeatures[seeds[i].y][seeds[i].x]) < Threshold
                 && abs(mGrayScaleMap.at<float>(seeds[j].y,seeds[j].x) - mGrayScaleMap.at<float>(seeds[i].y,seeds[i].x)) < 0.1 ) {             
                 classIDSeeds[i] = classIDSeeds[j];
             }
@@ -158,13 +158,13 @@ cv::Mat TextureSegment::ConnectSimilarPatches()
             classIDSeeds[i] = ++classID;
         }
     }
+    mTextureID = classID;
 
     for (int i = 0; i < classIDSeeds.size(); i++) {
-        std::cout << classIDSeeds[i] << " ";
+        // std::cout << classIDSeeds[i] << " ";
         checkMap.at<int>(seeds[i].y, seeds[i].x) = classIDSeeds[i];
-    }   
-    std::cout << std::endl;
-    std::cout << checkMap << std::endl;
+    }   // std::cout << std::endl;
+    // std::cout << checkMap << std::endl;
 
     int dx[4] = {-1, 1,  0, 0};
     int dy[4] = { 0, 0, -1, 1};
@@ -177,7 +177,7 @@ cv::Mat TextureSegment::ConnectSimilarPatches()
                 if (checkMap.at<int>(y,x) < 0) {
                     for (int i = 0; i < 4; i++) {
                         if (checkMap.at<int>(y+dy[i],x+dx[i]) >= 0) {
-                            if ( cv::norm(mPatchFeatures[y][x], mPatchFeatures[y+dy[i]][x+dx[i]]) < Threshold
+                            if ( cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+dy[i]][x+dx[i]]) < Threshold
                                 && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.1) )
                             {
                                 checkMap.at<int>(y,x) = checkMap.at<int>(y+dy[i],x+dx[i]);
@@ -194,8 +194,9 @@ cv::Mat TextureSegment::ConnectSimilarPatches()
         }
     } 
 
-    std::cout << "Iter: " << Iter << std::endl;
-    std::cout << checkMap << std::endl;
+    // std::cout << "Iter: " << Iter << std::endl;
+    // std::cout << checkMap << std::endl;
+    checkMap.copyTo(mTextureMap);
 
     #ifndef __ANDROID__
     cv::Mat imgShow;
@@ -208,7 +209,7 @@ cv::Mat TextureSegment::ConnectSimilarPatches()
     for (int y = 1; y < mGridNumY-1; y++) {
         for (int x = 1; x < mGridNumX-1; x++) {
             if (checkMap.at<int>(y, x) >= 0) {
-                cv::circle(imgShow, cv::Point2i(x*mGridX+mGridX/2, y*mGridY+mGridY/2), std::min(mGridX, mGridY)/4, colours[checkMap.at<int>(y, x)], 1);
+                cv::circle(imgShow, cv::Point2i(x*mGridX+mGridX/2, y*mGridY+mGridY/2), std::min(mGridX, mGridY)/8, colours[checkMap.at<int>(y, x)], 1);
             }
         }
     }

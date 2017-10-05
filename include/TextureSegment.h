@@ -14,22 +14,23 @@ public:
 
 public:
     cv::Mat mImage;
-    std::vector<std::vector<cv::Mat> > mPatchFeatures;
+    std::vector<std::vector<cv::Mat> > mGridGaborFeatures;
     cv::Mat mTextureMap;
     cv::Mat mGrayScaleMap;
     int mGridX;
     int mGridY;
     int mGridNumX;
     int mGridNumY;
+    int mTextureID;
 
     std::vector<cv::Mat> mGaborFilters;
 
 public: 
     void InitData(cv::Mat image, int gridX, int gridY);
     void InitGaborFilters();
-    void ComputePatchFeatures();
-    cv::Mat ComputeAPatchFeature(cv::Mat image);
-    cv::Mat ConnectSimilarPatches();
+    void ComputeGridFeatures();
+    cv::Mat ComputeAGridFeature(cv::Mat image);
+    cv::Mat ConnectSimilarGrids();
     void GetEigen();
 
 };

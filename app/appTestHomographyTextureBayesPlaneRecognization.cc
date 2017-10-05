@@ -93,12 +93,12 @@ int main(int argc, char** argv)
             if (started) {
 
                 if (!callAlgorithm && resTransVecs[nImg-1][0] == 0 && resTransVecs[nImg][0] != 0) {
-                    pPD->TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                    pPD->Detect(img_input, resRotVecs[nImg], resTransVecs[nImg]);
                     callAlgorithm = true;
                     // cv::destroyWindow("img_input");
                 } else {
                     if (callAlgorithm) {
-                        pPD->TrackMono(img_input, resRotVecs[nImg], resTransVecs[nImg]);
+                        pPD->Detect(img_input, resRotVecs[nImg], resTransVecs[nImg]);
                     }
                 }
                 cv::imshow("img_input", img_input);
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
         }
 
         if (started)
-            cmd = cv::waitKey(100);
+            cmd = cv::waitKey(30);
         else
             cmd = cv::waitKey(-1);
         
