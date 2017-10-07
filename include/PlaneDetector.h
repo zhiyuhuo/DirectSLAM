@@ -10,11 +10,16 @@
 #include "Frame.h"
 #include "TextureSegment.h"
 
+#ifndef  __ANDROID__
+#include "Viewer.h"
+#endif
+
 enum PlaneDetectionState {
     VOID,
     INITIALIZING,
     TRACKING,
     FILTERING,
+    FAILED,
     END
 };
 
@@ -34,10 +39,16 @@ public: // members
     std::vector<Frame> mFrameVecBuffer;
 
     // plane calculation data
-    std::vector<cv::Point2f> mPixelsMatchHMatrixOnRefFrame;
+    std::vector<cv::Point2f> mPixelsMatchHMatrixSurfaceOnRefFrame;
+    std::vector<cv::Point3f> mPoints3DMatchHMatrixSurface;
 
     // function members
     TextureSegment mTextureSeg;
+
+    // result members
+    std::vector<float> mMainPlane;
+    std::vector<float> mAnchorPoint;
+    int mWinnerTextureID;
 
 public: // functions
     bool   SetRefFrame(Frame& f);
@@ -47,9 +58,14 @@ public: // functions
     void   DetectMatchByOpticalFlow(Frame& ref, Frame& f);
     cv::Mat   ComputeHomographyFromMatchedPoints(std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1, std::vector<int>& indexsPlane);
     std::vector<float> CheckHomographyReprojError(cv::Mat H, std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1);
-    cv::Mat RecoverPlaneFromHomographyAndRT(cv::Mat H01, cv::Mat R0, cv::Mat t0, cv::Mat R1, cv::Mat t1);
-    cv::Mat RecoverPlaneFromPointPairsAndRT(std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1, 
-                                                       cv::Mat R0, cv::Mat t0, cv::Mat R1, cv::Mat t1);
+    bool   RecoverPlaneFromHomographyAndRT(cv::Mat H01, cv::Mat R0, cv::Mat t0, cv::Mat R1, cv::Mat t1);
+    bool   RecoverPlaneFromPointPairsAndRT(std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1, 
+                                                       cv::Mat R0, cv::Mat t0, cv::Mat R1, cv::Mat t1,
+                                                       std::vector<cv::Point2f>& pixels3d,
+                                                       std::vector<cv::Point3f>& points3d,
+                                                       std::vector<float>& mainPlane, std::vector<float>& anchorPoint);
+    bool   UpdatePlaneByTextureRelatedPoints(std::vector<cv::Point2f> pts, cv::Mat F_T_G, cv::Mat F_S_T, std::vector<int>& indexPts);
+    std::vector<cv::Point3f> GetPlaneRegionUsingAnchorPointAndTexture();
     
     // for drawing the grids on the horizontal surface.
     // F(S|G)
@@ -63,11 +79,7 @@ public: // functions
     // F(S)
     cv::Mat CalculateMarginalDistribution_Surface(cv::Mat F_S_G);
 
-    // get the prob of a key point belonging to the horizontal surface.
-    void GetProb_SurfacePoint();
-    // get the prob of a grid belonging to the horizontal surface.
-    void GetProb_SurfaceGrid();
-
+    float  RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std::vector<float>& mainPlane, std::vector<float>& anchorPoint);
     float  GetPatchIntense(float u, float v, int width, unsigned char* image);
     
 };

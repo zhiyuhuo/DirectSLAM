@@ -12,10 +12,13 @@
 
 #include <mutex>
 
+#include "CameraIntrinsic.h"
 #include "PlaneDetector.h"
+#include "Frame.h"
 
-class ImageFrame;
+class Frame;
 class CameraIntrinsic;
+class PlaneDetector;
 
 class Viewer
 {
@@ -32,6 +35,12 @@ class Viewer
         void drawPixelsDepth();
         void drawMapAxis();
 
+        static void DrawPlane(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane, std::vector<cv::Point3f> points);
+        static void DrawSquare(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane, float sqaureCentroidX, float sqaureCentroidY);
+        static void DrawAR(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane);
+        static void DrawAR(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane, std::vector<float> anchorPoint);
+        static void GetAxis(CameraIntrinsic* K, Frame& f, const cv::Point3f& p3d1, const cv::Point3f &p3d2,
+                        cv::Point2f& p2d1, cv::Point2f& p2d2);
 
     private:
         PlaneDetector* pd;

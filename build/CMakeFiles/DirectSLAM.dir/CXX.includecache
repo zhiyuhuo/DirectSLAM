@@ -83,6 +83,8 @@ Frame.h
 ../include/Frame.h
 TextureSegment.h
 ../include/TextureSegment.h
+Viewer.h
+../include/Viewer.h
 
 ../include/Statistic.h
 stdio.h
@@ -129,8 +131,12 @@ pangolin/pangolin.h
 -
 mutex
 -
+CameraIntrinsic.h
+../include/CameraIntrinsic.h
 PlaneDetector.h
 ../include/PlaneDetector.h
+Frame.h
+../include/Frame.h
 
 ../thirdparty/spdlog/async_logger.h
 spdlog/common.h

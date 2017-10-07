@@ -74,7 +74,7 @@ void Frame::ExtractFastPointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& ke
     for (int i = 0; i < kps.size(); i++) {
         kps[i].pt = kps[i].pt + cv::Point2f(image.cols/8, image.rows/8);
         kps[i].octave = level;
-        kps[i].class_id = 1;
+        kps[i].class_id = 0;
     }
     ComputeResponses(image, kps, fastThreshold);
     for (int i = 0; i < kps.size(); i++) {
@@ -107,7 +107,7 @@ void Frame::ExtractEdgePointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& ke
         kps[i].pt = pts[i];
         kps[i].response = grad_megs[i];
         kps[i].octave = level;
-        kps[i].class_id = 2;
+        kps[i].class_id = 1;
     }
     for (int i = 0; i < kps.size(); i++) {
         keypoints.push_back(kps[i]);
