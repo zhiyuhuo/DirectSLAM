@@ -1,6 +1,6 @@
 #include "PlaneDetector.h" 
 #define LEVEL 0
-#define FRAMENUM 5
+#define FRAMENUM 10
 
 PlaneDetector::PlaneDetector(CameraIntrinsic* K)
 {
@@ -9,6 +9,7 @@ PlaneDetector::PlaneDetector(CameraIntrinsic* K)
     mLevel = LEVEL;
     mFrameNum = FRAMENUM;
     mWinnerTextureID = -1;
+    mTrackFrameIndex = 0;
 }
 
 bool PlaneDetector::SetRefFrame(Frame& f)
@@ -50,10 +51,16 @@ PlaneDetectionState PlaneDetector::Detect(cv::Mat image, std::vector<float> R_, 
         }
     }
     else if (mState == PlaneDetectionState::TRACKING) {
+        bool resDetect = false;
         TIME_BEGIN();
-        DetectMatchByOpticalFlow(mRefFrame, mFrameVecBuffer[2]);
+        resDetect = DetectMatchByOpticalFlow(mRefFrame, mFrameVecBuffer[mTrackFrameIndex]);
         TIME_END("DetectMatchByOpticalFlow");
-        mState = PlaneDetectionState::FILTERING;
+        if (resDetect == true) {
+            Log_info("mTrackFrameIndex: {}", mTrackFrameIndex);
+            mState = PlaneDetectionState::FILTERING;
+        } else {
+            mTrackFrameIndex++;
+        }
     }
     else if (mState == PlaneDetectionState::FILTERING) {
 
@@ -91,7 +98,7 @@ PlaneDetectionState PlaneDetector::Detect(cv::Mat image, std::vector<float> R_, 
     return mState;
 }
 
-void PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
+bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
 {
     int Level = mLevel;
     cv::Mat imageref = ref.mImgPyr[Level];
@@ -120,6 +127,17 @@ void PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
             pts0Feature.push_back(pts0Raw[i]);
             pts1Feature.push_back(pts1Raw[i]);
         }
+    }
+
+    float parallax = 0;
+    for (int i = 0; i < indexPtsFeature.size(); i++) {
+        parallax += cv::norm(pts1Feature[i] - pts0Feature[i]);
+    }
+    parallax /= indexPtsFeature.size();
+    Log_info("parallax: {}", parallax);
+
+    if (parallax < 10) {
+        return false;
     }
 
     // check the matching by orb
@@ -153,9 +171,13 @@ void PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
         cv::circle(img4Show, pts1Raw[indexPtsPlane[i]]+cv::Point2f(imageref.cols,0), 3, cv::Scalar(255, 0, 255), 1);
         cv::line(img4Show, pts0Raw[indexPtsPlane[i]], pts1Raw[indexPtsPlane[i]]+cv::Point2f(imageref.cols,0), cv::Scalar(0, 255, 0), 1, CV_AA);
     }
+    for (int i = 0; i < mPixelsMatchHMatrixSurfaceOnRefFrame.size(); i++) {
+        cv::circle(img4Show, mPixelsMatchHMatrixSurfaceOnRefFrame[i], 4, cv::Scalar(255, 255, 0), 1);
+    }
     cv::imshow("image alignment", img4Show);
     #endif
 
+    return true;
 }
 
 cv::Mat PlaneDetector::ComputeHomographyFromMatchedPoints(std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1, std::vector<int>& indexsPlane)
@@ -224,7 +246,7 @@ cv::Mat PlaneDetector::ComputeHomographyFromMatchedPoints(std::vector<cv::Point2
             std::vector<cv::Point2f> im1(1, pts1[i]);
             std::vector<float> err = CheckHomographyReprojError(HSet[j], im0, im1);
 
-            if (err[0] < 1.49) {
+            if (err[0] < 0.99) {
                 supportHSet[j] ++;
                 supportPoints[j].push_back(i);
             }
@@ -310,6 +332,7 @@ bool PlaneDetector::RecoverPlaneFromPointPairsAndRT(std::vector<cv::Point2f> pts
     std::vector<cv::Point2f> pixels;
     std::vector<cv::Point3f> points;
     for (int i = 0; i < p4d.cols; i++) {
+        // std::cout << p4d.col(i).t() << std::endl;
         if (p4d.at<float>(3,i) != 0) {
             points.push_back(cv::Point3f(p4d.at<float>(0,i), p4d.at<float>(1,i), p4d.at<float>(2,i)));
             pixels.push_back(pts0[i]);
@@ -344,7 +367,7 @@ bool PlaneDetector::UpdatePlaneByTextureRelatedPoints(std::vector<cv::Point2f> p
         // std::cout << f_t_g << f_s_t << std::endl;
         cv::Mat weightMat = f_t_g * f_s_t;
         weights.at<float>(i, 0) = weightMat.at<float>(0, 0);
-        std::cout << pts[i] << x << " " << y << " " << f_t_g << f_s_t.t() << weights.at<float>(i, 0) << std::endl;
+        // std::cout << pts[i] << x << " " << y << " " << f_t_g << f_s_t.t() << weights.at<float>(i, 0) << std::endl;
     }
 
     double minw, maxw;
@@ -370,7 +393,8 @@ bool PlaneDetector::UpdatePlaneByTextureRelatedPoints(std::vector<cv::Point2f> p
     }
 
     int candidatesSize = indexes.size();
-    if (candidatesSize > 5) {
+    std::cout << "candidatesSize: " << candidatesSize << std::endl;
+    if (candidatesSize > 3) {
         std::vector<cv::Point3f> pt3dCandidates;
         std::vector<float> textureWeights(F_S_T.rows, 0);
         for (int i = 0; i < indexes.size(); i++) {
@@ -461,16 +485,24 @@ cv::Mat PlaneDetector::CalculateConditionalDistribution_SurfaceGrid(std::vector<
 
     std::vector<cv::Point2f> pts = ptsMatchHMat;
     float R = 0.36 * cv::norm(cv::Point2f(mTextureSeg.mGridX/2, mTextureSeg.mGridY/2));
+    float gridR = cv::norm(cv::Point2f(mTextureSeg.mGridX/2, mTextureSeg.mGridY/2));
 
     for (int y = 0; y < mTextureSeg.mTextureMap.rows; y++) {
         for (int x = 0; x < mTextureSeg.mTextureMap.cols; x++) {
             int id = x + y * mTextureSeg.mTextureMap.cols;
             cv::Point2f cGrid(x*mTextureSeg.mGridX + mTextureSeg.mGridX/2, y*mTextureSeg.mGridY+mTextureSeg.mGridY/2);
-            float d, score = 0.0;
+            // float d, score = 0.0;
+            // for (int i = 0; i < pts.size(); i++) {
+            //     d = cv::norm(pts[i] - cGrid)/R;
+            //     if (std::exp(-d) > score) {
+            //         score = std::exp(-d/R);
+            //     }
+            // }
+            float s, score = 0.;
             for (int i = 0; i < pts.size(); i++) {
-                d = cv::norm(pts[i] - cGrid)/R;
-                if (std::exp(-d) > score) {
-                    score = std::exp(-d/R);
+                s = GetGridProb(pts[i], cGrid, gridR);
+                if (s > score) {
+                    score = s;  
                 }
             }
             p_surface_grid.at<float>(id, 1) = score;
@@ -636,10 +668,10 @@ float PlaneDetector::RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std
     cv::SVD svd;
     cv::Mat w, u, vt;
     svd.compute(covMat, w, u, vt);
-    std::cout << u << std::endl << w << std::endl << vt << std::endl;
+    // std::cout << u << std::endl << w << std::endl << vt << std::endl;
     cv::Mat normal = vt.t().col(2);
     float d = -( c.x*normal.at<float>(0,0) + c.y*normal.at<float>(1,0) + c.z*normal.at<float>(2,0) );
-    std::cout << normal.t() << d << std::endl;
+    // std::cout << normal.t() << d << std::endl;
     normal = normal / d;
     d = d / d;
 
@@ -654,7 +686,36 @@ float PlaneDetector::RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std
     anchorPoint[1] = c.y;
     anchorPoint[2] = c.z;
 
+    // calculate mean distance
+    float meanDistance = 0;
+    for (int i = 0; i < p3ds.size(); i++) {
+        float dist = GetDistPoint2Plane(p3ds[i], mainPlane);
+        meanDistance += dist;
+        // std::cout << "p3d: " << p3ds[i] << " " << dist << std::endl;
+    }   
+    std::cout << "meanDistance: " << meanDistance/p3ds.size() << std::endl;
+
     return res;
+}
+
+float PlaneDetector::GetGridProb(cv::Point2f gridCenter, cv::Point2f pt, float gridR)
+{
+    float res = 0;
+    float R = gridR;
+    float dist = cv::norm(gridCenter - pt);
+    if (dist < R) {
+        res = sqrt( (R - dist/2) / R );
+    } else if ( dist < 1.5*R )  {
+        res = 0.707 * ((1.5*R-dist) / (0.5*R)) ;
+    } else {
+        res = 0;
+    }
+
+    return res;
+}
+
+float PlaneDetector::GetDistPoint2Plane(cv::Point3f pt, std::vector<float> plane) {
+    return abs(pt.x*plane[0] + pt.y*plane[1] + pt.z*plane[2] + plane[3]) / sqrt(plane[0]*plane[0] + plane[1]*plane[1] + plane[2]*plane[2]);
 }
 
 float PlaneDetector::GetPatchIntense(float u, float v, int width, unsigned char* image)

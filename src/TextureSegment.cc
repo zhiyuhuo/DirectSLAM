@@ -9,7 +9,7 @@ void TextureSegment::InitGaborFilters()
 {
     cv::Size ksize(5, 5);
     double pi_value = 3.14159265;
-    std::vector<double> sigma = {1, 2, 3};
+    std::vector<double> sigma = {1, 2, 3, 4};
     std::vector<double> theta = {pi_value * 0.125, pi_value * 0.25, pi_value * 0.375, pi_value * 0.50, 
                                  pi_value * 0.625, pi_value * 0.75, pi_value * 0.875, pi_value * 1.0};
     std::vector<double> lambd = {1};

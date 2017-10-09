@@ -37,6 +37,7 @@ public: // members
 
     Frame mRefFrame;
     std::vector<Frame> mFrameVecBuffer;
+    int mTrackFrameIndex;
 
     // plane calculation data
     std::vector<cv::Point2f> mPixelsMatchHMatrixSurfaceOnRefFrame;
@@ -55,7 +56,7 @@ public: // functions
     bool   AddObvFrame(Frame& f);
     PlaneDetectionState Detect(cv::Mat image, std::vector<float> R_, std::vector<float> t_);
 
-    void   DetectMatchByOpticalFlow(Frame& ref, Frame& f);
+    bool   DetectMatchByOpticalFlow(Frame& ref, Frame& f);
     cv::Mat   ComputeHomographyFromMatchedPoints(std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1, std::vector<int>& indexsPlane);
     std::vector<float> CheckHomographyReprojError(cv::Mat H, std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1);
     bool   RecoverPlaneFromHomographyAndRT(cv::Mat H01, cv::Mat R0, cv::Mat t0, cv::Mat R1, cv::Mat t1);
@@ -80,6 +81,8 @@ public: // functions
     cv::Mat CalculateMarginalDistribution_Surface(cv::Mat F_S_G);
 
     float  RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std::vector<float>& mainPlane, std::vector<float>& anchorPoint);
+    float  GetGridProb(cv::Point2f gridCenter, cv::Point2f pt, float gridR);
+    float  GetDistPoint2Plane(cv::Point3f pt, std::vector<float> plane);
     float  GetPatchIntense(float u, float v, int width, unsigned char* image);
     
 };
