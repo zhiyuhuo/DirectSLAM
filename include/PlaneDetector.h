@@ -57,6 +57,7 @@ public: // functions
     PlaneDetectionState Detect(cv::Mat image, std::vector<float> R_, std::vector<float> t_);
 
     bool   DetectMatchByOpticalFlow(Frame& ref, Frame& f);
+    bool   DetectMatchByBatchOpticalFlow(Frame& ref, std::vector<Frame>& fSet);
     cv::Mat   ComputeHomographyFromMatchedPoints(std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1, std::vector<int>& indexsPlane);
     std::vector<float> CheckHomographyReprojError(cv::Mat H, std::vector<cv::Point2f> pts0, std::vector<cv::Point2f> pts1);
     bool   RecoverPlaneFromHomographyAndRT(cv::Mat H01, cv::Mat R0, cv::Mat t0, cv::Mat R1, cv::Mat t1);

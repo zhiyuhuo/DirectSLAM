@@ -54,6 +54,7 @@ PlaneDetectionState PlaneDetector::Detect(cv::Mat image, std::vector<float> R_, 
         bool resDetect = false;
         TIME_BEGIN();
         resDetect = DetectMatchByOpticalFlow(mRefFrame, mFrameVecBuffer[mTrackFrameIndex]);
+        // resDetect = DetectMatchByBatchOpticalFlow(mRefFrame, mFrameVecBuffer);
         TIME_END("DetectMatchByOpticalFlow");
         if (resDetect == true) {
             Log_info("mTrackFrameIndex: {}", mTrackFrameIndex);
@@ -117,12 +118,13 @@ bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
     }
 
     cv::Mat status, err;
-    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(20,20), 3);
+    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(30,30), 3);
     
     // check the error
     for (int i = 0; i < status.rows; i++) {
+        std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
         if (status.at<unsigned char>(i, 0) && err.at<unsigned char>(i, 0) < 30) {
-            // std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
+            std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
             indexPtsFeature.push_back(indexPtsRaw[i]);
             pts0Feature.push_back(pts0Raw[i]);
             pts1Feature.push_back(pts1Raw[i]);
@@ -133,12 +135,15 @@ bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
     for (int i = 0; i < indexPtsFeature.size(); i++) {
         parallax += cv::norm(pts1Feature[i] - pts0Feature[i]);
     }
+    Log_info("indexPtsFeature.size(): {}", indexPtsFeature.size());
     parallax /= indexPtsFeature.size();
     Log_info("parallax: {}", parallax);
 
-    if (parallax < 10) {
+    if (parallax < 20) {
         return false;
     }
+    Log_info("parallax: {}", parallax);
+    Log_info("indexPtsFeature.size(): {}", indexPtsFeature.size());
 
     // check the matching by orb
     indexPts = indexPtsFeature;
@@ -166,17 +171,98 @@ bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
     imagef.copyTo(img4Show(cv::Rect(imageref.cols, 0, imageref.cols, imageref.rows)));
     cv::cvtColor(img4Show, img4Show, CV_GRAY2BGR);
     // std::cout << pts0Plane.size() << std::endl;
+    for (int i = 0; i < indexPtsFeature.size(); i++) {
+        cv::circle(img4Show, pts0Raw[indexPtsFeature[i]], 3, cv::Scalar(255, 0, 0), 1);
+        cv::circle(img4Show, pts1Raw[indexPtsFeature[i]]+cv::Point2f(imageref.cols,0), 3, cv::Scalar(255, 0, 255), 1);
+          cv::line(img4Show, pts0Raw[indexPtsFeature[i]], pts1Raw[indexPtsFeature[i]]+cv::Point2f(imageref.cols,0), cv::Scalar(0, 255, 0), 1, CV_AA);
+    }
+
     for (int i = 0; i < indexPtsPlane.size(); i++) {
-        cv::circle(img4Show, pts0Raw[indexPtsPlane[i]], 3, cv::Scalar(255, 0, 0), 1);
-        cv::circle(img4Show, pts1Raw[indexPtsPlane[i]]+cv::Point2f(imageref.cols,0), 3, cv::Scalar(255, 0, 255), 1);
-        cv::line(img4Show, pts0Raw[indexPtsPlane[i]], pts1Raw[indexPtsPlane[i]]+cv::Point2f(imageref.cols,0), cv::Scalar(0, 255, 0), 1, CV_AA);
+        cv::circle(img4Show, pts0Raw[indexPtsPlane[i]], 4, cv::Scalar(255, 0, 255), 1);
     }
     for (int i = 0; i < mPixelsMatchHMatrixSurfaceOnRefFrame.size(); i++) {
-        cv::circle(img4Show, mPixelsMatchHMatrixSurfaceOnRefFrame[i], 4, cv::Scalar(255, 255, 0), 1);
+        cv::circle(img4Show, mPixelsMatchHMatrixSurfaceOnRefFrame[i], 5, cv::Scalar(255, 255, 0), 1);
     }
     cv::imshow("image alignment", img4Show);
     #endif
 
+    return true;
+}
+
+bool PlaneDetector::DetectMatchByBatchOpticalFlow(Frame& ref, std::vector<Frame>& fSet)
+{
+    int Level = mLevel;
+    cv::Mat imageref = ref.mImgPyr[Level];
+    std::vector<cv::KeyPoint> kpsref = ref.mKpsPyr[Level];
+
+    std::vector<cv::Point2f> ptsRefRaw;
+    std::vector<int>    indexPtsRefRaw;
+    for (int i = 0; i < kpsref.size(); i++) {
+        ptsRefRaw.push_back(kpsref[i].pt);
+        indexPtsRefRaw.push_back(i);
+    }
+
+    std::vector<cv::Point2f> pts0Raw = ptsRefRaw;
+    std::vector<int>    indexPts0Raw = indexPtsRefRaw;
+    cv::Mat image0, image1;
+    image0 = imageref.clone();
+    cv::Mat status = cv::Mat(); 
+    cv::Mat err    = cv::Mat();
+    for (int n = 0; n < fSet.size(); n+=5) {
+        cv::Mat image1 = fSet[n].mImgPyr[Level].clone();
+        std::vector<cv::Point2f> pts1Raw;
+        cv::calcOpticalFlowPyrLK(image0, image1, pts0Raw, pts1Raw, status, err, cv::Size(30, 30), 3);
+
+        // visualization. for debug
+        #ifndef __ANDROID__
+        cv::Mat img4Show = cv::Mat::zeros(image0.rows, image0.cols*2, CV_8UC1);
+        image0.copyTo(img4Show(cv::Rect(0, 0, image0.cols, image0.rows)));
+        image1.copyTo(img4Show(cv::Rect(image0.cols, 0, image0.cols, image0.rows)));
+        cv::cvtColor(img4Show, img4Show, CV_GRAY2BGR);
+        for (int i = 0; i < pts0Raw.size(); i++) {
+            // std::cout << (int)status.at<unsigned char>(i, 0) << ", " << (int)err.at<unsigned char>(i, 0) << std::endl;
+            if (status.at<unsigned char>(i, 0) && err.at<unsigned char>(i, 0) < 100) {
+                cv::circle(img4Show, pts0Raw[i], 3, cv::Scalar(255, 0, 0), 1);
+                cv::circle(img4Show, pts1Raw[i]+cv::Point2f(image0.cols,0), 3, cv::Scalar(255, 0, 255), 1);
+                  cv::line(img4Show, pts0Raw[i], pts1Raw[i]+cv::Point2f(image0.cols,0), cv::Scalar(0, 255, 0), 1, CV_AA);
+            }
+        }
+        cv::imshow("image alignment 2", img4Show);
+        cv::waitKey(-1);
+        #endif
+
+        std::cout << pts0Raw.size() << " " << pts1Raw.size() << " " << indexPtsRefRaw.size() << "\n";
+        std::vector<int> indexPts0Raw = indexPtsRefRaw;
+        indexPtsRefRaw.resize(0);
+        pts0Raw.resize(0);
+        for (int i = 0; i < status.rows; i++) {
+            if (status.at<unsigned char>(i, 0) && err.at<unsigned char>(i, 0) < 100) {
+                indexPtsRefRaw.push_back(indexPts0Raw[i]);
+                pts0Raw.push_back(pts1Raw[i]);
+            }
+        }
+        std::cout << pts0Raw.size() << " " << indexPtsRefRaw.size() << "\n";
+        image0 = image1.clone();
+    }
+
+    // visualization. for debug
+    #ifndef __ANDROID__
+    cv::Mat img4Show = cv::Mat::zeros(image0.rows, image0.cols*2, CV_8UC1);
+    imageref.copyTo(img4Show(cv::Rect(0, 0, image0.cols, image0.rows)));
+    image0.copyTo(img4Show(cv::Rect(image0.cols, 0, image0.cols, image0.rows)));
+    cv::cvtColor(img4Show, img4Show, CV_GRAY2BGR);
+    for (int i = 0; i < pts0Raw.size(); i++) {
+        // std::cout << (int)status.at<unsigned char>(i, 0) << ", " << (int)err.at<unsigned char>(i, 0) << std::endl;
+        if (status.at<unsigned char>(i, 0) && err.at<unsigned char>(i, 0) < 20) {
+            cv::circle(img4Show, ptsRefRaw[indexPtsRefRaw[i]], 3, cv::Scalar(255, 0, 0), 1);
+            cv::circle(img4Show, pts0Raw[indexPtsRefRaw[i]]+cv::Point2f(image0.cols,0), 3, cv::Scalar(255, 0, 255), 1);
+            cv::line(img4Show, ptsRefRaw[indexPtsRefRaw[i]], pts0Raw[indexPtsRefRaw[i]]+cv::Point2f(image0.cols,0), cv::Scalar(0, 255, 0), 1, CV_AA);
+        }
+    }
+    cv::imshow("image alignment 2", img4Show);
+    cv::waitKey(-1);
+    #endif
+    
     return true;
 }
 
@@ -249,6 +335,11 @@ cv::Mat PlaneDetector::ComputeHomographyFromMatchedPoints(std::vector<cv::Point2
             if (err[0] < 0.99) {
                 supportHSet[j] ++;
                 supportPoints[j].push_back(i);
+                // if (err[0] < minErr)
+                // {
+                //     minErr = err[0];
+                //     minErrIndex = j; 
+                // }
             }
         }
     }
@@ -257,7 +348,7 @@ cv::Mat PlaneDetector::ComputeHomographyFromMatchedPoints(std::vector<cv::Point2
     int bestPlaneCandidate = 0;
     int maxSupporterNum = 0;
     for (int i = 0; i < supportHSet.size(); i++) {
-        // std::cout << supportHSet[i] << " " << std::endl;
+        std::cout << supportHSet[i] << " " << std::endl;
         if (supportHSet[i] > maxSupporterNum) {
             bestPlaneCandidate = i;
             maxSupporterNum = supportHSet[i];
@@ -394,7 +485,7 @@ bool PlaneDetector::UpdatePlaneByTextureRelatedPoints(std::vector<cv::Point2f> p
 
     int candidatesSize = indexes.size();
     std::cout << "candidatesSize: " << candidatesSize << std::endl;
-    if (candidatesSize > 3) {
+    if (candidatesSize >= 3) {
         std::vector<cv::Point3f> pt3dCandidates;
         std::vector<float> textureWeights(F_S_T.rows, 0);
         for (int i = 0; i < indexes.size(); i++) {

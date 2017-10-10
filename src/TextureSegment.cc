@@ -9,7 +9,7 @@ void TextureSegment::InitGaborFilters()
 {
     cv::Size ksize(5, 5);
     double pi_value = 3.14159265;
-    std::vector<double> sigma = {1, 2, 3, 4};
+    std::vector<double> sigma = {1, 2, 3, 4, 5};
     std::vector<double> theta = {pi_value * 0.125, pi_value * 0.25, pi_value * 0.375, pi_value * 0.50, 
                                  pi_value * 0.625, pi_value * 0.75, pi_value * 0.875, pi_value * 1.0};
     std::vector<double> lambd = {1};
@@ -114,7 +114,7 @@ cv::Mat TextureSegment::ComputeAGridFeature(cv::Mat img)
 
 cv::Mat TextureSegment::ConnectSimilarGrids()
 {
-    float Threshold = 3.0;
+    float Threshold = 5.0;
     int IterMax = 30;
 
     bool ifConverge = false;
@@ -172,23 +172,34 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
     int Iter = 0;
     for (; Iter < 30; Iter++) {
         bool ifChange = false;
+
         for (int y = 1; y < mGridNumY-1; y++) {
             for (int x = 1; x < mGridNumX-1; x++) {
                 if (checkMap.at<int>(y,x) < 0) {
+                    float minValue = 999999.;
+                    int minIndex = -1;
                     for (int i = 0; i < 4; i++) {
                         if (checkMap.at<int>(y+dy[i],x+dx[i]) >= 0) {
-                            if ( cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+dy[i]][x+dx[i]]) < Threshold
-                                && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.1) )
-                            {
-                                checkMap.at<int>(y,x) = checkMap.at<int>(y+dy[i],x+dx[i]);
-                                ifChange = true;
-                                break;
+
+                            float dist = cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+dy[i]][x+dx[i]]);
+                            if (dist < minValue && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.1)) {
+                                minValue = dist;
+                                minIndex = checkMap.at<int>(y+dy[i],x+dx[i]);
                             }
+
                         }
+                    }
+
+                    if ( minValue < Threshold )
+                    {
+                        checkMap.at<int>(y,x) = minIndex;
+                        ifChange = true;
+                        break;
                     }
                 }
             }
         }
+
         if (!ifChange) {
             break;
         }
