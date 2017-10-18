@@ -51,6 +51,9 @@ public: // members
     std::vector<float> mAnchorPoint;
     int mWinnerTextureID;
 
+    // line-tracking based plane detection variables
+    int mLandmarkNum;
+
 public: // functions
     bool   SetRefFrame(Frame& f);
     bool   AddObvFrame(Frame& f);
@@ -68,6 +71,10 @@ public: // functions
                                                        std::vector<float>& mainPlane, std::vector<float>& anchorPoint);
     bool   UpdatePlaneByTextureRelatedPoints(std::vector<cv::Point2f> pts, cv::Mat F_T_G, cv::Mat F_S_T, std::vector<int>& indexPts);
     std::vector<cv::Point3f> GetPlaneRegionUsingAnchorPointAndTexture();
+
+    void Get3DLineFromTwoObservations();
+    void Get3DLinesFromObservations();
+    void Get3DLinesIntersectionFromTwoFrames(Frame& reff, Frame& f);
     
     // for drawing the grids on the horizontal surface.
     // F(S|G)
@@ -85,6 +92,8 @@ public: // functions
     float  GetGridProb(cv::Point2f gridCenter, cv::Point2f pt, float gridR);
     float  GetDistPoint2Plane(cv::Point3f pt, std::vector<float> plane);
     float  GetPatchIntense(float u, float v, int width, unsigned char* image);
+
+    void    TestFeaturePointsMatching(Frame& f1, Frame& f2);
     
 };
 

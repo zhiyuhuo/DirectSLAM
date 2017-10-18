@@ -3,6 +3,7 @@
 
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: ../include/CameraIntrinsic.h
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: ../include/Frame.h
+CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: ../include/GeometryR.h
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: ../include/Log.h
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: ../include/PlaneDetector.h
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: ../include/Statistic.h
@@ -112,6 +113,8 @@ CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomogr
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc.hpp
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/imgproc_c.h
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/types_c.h
+CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor.hpp
+CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor/descriptor.hpp
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/ml.hpp
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect.hpp
 CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.o: /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect/detection_based_tracker.hpp

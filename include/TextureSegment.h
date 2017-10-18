@@ -21,12 +21,15 @@ public:
     int mGridY;
     int mGridNumX;
     int mGridNumY;
+    int mWinX;
+    int mWinY;
     int mTextureID;
 
     std::vector<cv::Mat> mGaborFilters;
 
 public: 
     void InitData(cv::Mat image, int gridX, int gridY);
+    void InitData(cv::Mat image, int gridX, int gridY, int winX, int winY);
     void InitGaborFilters();
     void ComputeGridFeatures();
     cv::Mat ComputeAGridFeature(cv::Mat image);

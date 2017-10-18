@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rokid/projects/DirectSLAM/src/CameraIntrinsic.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Frame.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Frame.cc.o"
+  "/home/rokid/projects/DirectSLAM/src/GeometryR.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/GeometryR.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Log.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Log.cc.o"
   "/home/rokid/projects/DirectSLAM/src/Optimization.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o"
   "/home/rokid/projects/DirectSLAM/src/PlaneDetector.cc" "/home/rokid/projects/DirectSLAM/build/CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o"

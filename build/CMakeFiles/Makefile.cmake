@@ -67,7 +67,9 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/DirectSLAM.dir/DependInfo.cmake"
   "CMakeFiles/patent.dir/DependInfo.cmake"
+  "CMakeFiles/DirectSLAM.dir/DependInfo.cmake"
   "CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/DependInfo.cmake"
+  "CMakeFiles/PlaneDetection.dir/DependInfo.cmake"
+  "CMakeFiles/appTestPlaneDetection.dir/DependInfo.cmake"
   )

@@ -59,6 +59,16 @@ add_library(${PROJECT_NAME} SHARED
 	src/Statistic.cc
 	src/PlaneDetector.cc
 	src/TextureSegment.cc
+	src/GeometryR.cc
+)
+
+add_library(PlaneDetection SHARED
+	PlaneDetection/Frame.cc
+	PlaneDetection/CameraIntrinsic.cc
+	PlaneDetection/Log.cc
+	PlaneDetection/TextureSegment.cc
+	PlaneDetection/Viewer.cc
+	PlaneDetection/PlaneDetector.cc
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -68,10 +78,18 @@ ${Pangolin_LIBRARIES}
 ceres
 )
 
+target_link_libraries(PlaneDetection
+${OpenCV_LIBRARIES}
+${Pangolin_LIBRARIES}
+)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 link_directories(${CERES_LIBRARY})
 link_directories("/home/rokid/Loitor_VI_Sensor_SDK_V1.3.1/SDK/src")
+
+add_executable(appTestPlaneDetection app/appTestPlaneDetection.cc)
+target_link_libraries(appTestPlaneDetection loitorusbcam loitorimu usb-1.0 PlaneDetection )
 
 add_executable(appTestHomographyTextureBayesPlaneRecognization app/appTestHomographyTextureBayesPlaneRecognization.cc)
 target_link_libraries(appTestHomographyTextureBayesPlaneRecognization loitorusbcam loitorimu usb-1.0 ${PROJECT_NAME} )

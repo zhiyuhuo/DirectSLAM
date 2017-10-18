@@ -1,6 +1,35 @@
 #include "PlaneDetector.h" 
 #define LEVEL 0
-#define FRAMENUM 10
+#define FRAMENUM 100
+
+inline float Distance_Point2Line(cv::Point3f p, cv::Mat n, cv::Point3f v) 
+{
+    float vx = v.x;
+    float vy = v.y;
+    float vz = v.z;
+
+    float nx = n.at<float>(0,0);
+    float ny = n.at<float>(1,0);
+    float nz = n.at<float>(2,0);
+
+    float px = p.x;
+    float py = p.y;
+    float pz = p.z;
+    
+    float ax = vx - px;
+    float ay = vy - py;
+    float az = vz - pz;
+
+    float s = - (ax*nx + ay*ny + az*nz)/(nx*nx + ny*ny + nz*nz);
+
+    float tx = vx + nx*s;
+    float ty = vy + ny*s;
+    float tz = vz + nz*s;
+
+    float D = cv::norm(cv::Point3f(px-tx, py-ty, pz-tz));
+
+    return D;
+}
 
 PlaneDetector::PlaneDetector(CameraIntrinsic* K)
 {
@@ -10,12 +39,20 @@ PlaneDetector::PlaneDetector(CameraIntrinsic* K)
     mFrameNum = FRAMENUM;
     mWinnerTextureID = -1;
     mTrackFrameIndex = 0;
+    mLandmarkNum = 3;
 }
 
 bool PlaneDetector::SetRefFrame(Frame& f)
 {
     f.ExtractFeaturePoint();
     f.ShowPyr(mLevel);
+
+    // line landmark plane detection.
+    f.ExtractLines();
+    f.FindLandmarkLines();
+    f.ExtractLandmarkLinePlane(mK);
+    f.GetAllIntersectionPointsFromLandmarks();
+    f.ShowLines();
 
     mRefFrame = f;
     return true;
@@ -39,7 +76,7 @@ PlaneDetectionState PlaneDetector::Detect(cv::Mat image, std::vector<float> R_, 
     if (mState == PlaneDetectionState::VOID) {
         SetRefFrame(f);
         TIME_BEGIN();
-        mTextureSeg.InitData(mRefFrame.mImgPyr[mLevel], 20, 20);
+        mTextureSeg.InitData(mRefFrame.mImgPyr[mLevel], 10, 10);
         mTextureSeg.ComputeGridFeatures();
         TIME_END("Segment Ref Frame Image ");
         mState = PlaneDetectionState::INITIALIZING;
@@ -53,17 +90,46 @@ PlaneDetectionState PlaneDetector::Detect(cv::Mat image, std::vector<float> R_, 
     else if (mState == PlaneDetectionState::TRACKING) {
         bool resDetect = false;
         TIME_BEGIN();
+
         resDetect = DetectMatchByOpticalFlow(mRefFrame, mFrameVecBuffer[mTrackFrameIndex]);
         // resDetect = DetectMatchByBatchOpticalFlow(mRefFrame, mFrameVecBuffer);
         TIME_END("DetectMatchByOpticalFlow");
         if (resDetect == true) {
             Log_info("mTrackFrameIndex: {}", mTrackFrameIndex);
+
+            // line landmark plane detection.
+            mFrameVecBuffer[mTrackFrameIndex].ExtractLines();
+            if (mTrackFrameIndex == 0)
+                mFrameVecBuffer[mTrackFrameIndex].TrackLandmarkLineRefFrame(mRefFrame);
+            else 
+                mFrameVecBuffer[mTrackFrameIndex].TrackLandmarkLineRefFrame(mFrameVecBuffer[mTrackFrameIndex-1]);
+            mFrameVecBuffer[mTrackFrameIndex].ExtractLandmarkLinePlane(mK);
+            mFrameVecBuffer[mTrackFrameIndex].GetAllIntersectionPointsFromLandmarks();
+            mFrameVecBuffer[mTrackFrameIndex].ShowLines();
+            Get3DLinesIntersectionFromTwoFrames(mRefFrame, mFrameVecBuffer[mTrackFrameIndex]);
+
             mState = PlaneDetectionState::FILTERING;
         } else {
+
+            // line landmark plane detection.
+            mFrameVecBuffer[mTrackFrameIndex].ExtractLines();
+            if (mTrackFrameIndex == 0)
+                mFrameVecBuffer[mTrackFrameIndex].TrackLandmarkLineRefFrame(mRefFrame);
+            else 
+                mFrameVecBuffer[mTrackFrameIndex].TrackLandmarkLineRefFrame(mFrameVecBuffer[mTrackFrameIndex-1]);
+            mFrameVecBuffer[mTrackFrameIndex].ExtractLandmarkLinePlane(mK);
+            mFrameVecBuffer[mTrackFrameIndex].GetAllIntersectionPointsFromLandmarks();
+            mFrameVecBuffer[mTrackFrameIndex].ShowLines();
+            Get3DLinesIntersectionFromTwoFrames(mRefFrame, mFrameVecBuffer[mTrackFrameIndex]);
+
             mTrackFrameIndex++;
         }
+
+        cv::waitKey(-1);
     }
     else if (mState == PlaneDetectionState::FILTERING) {
+
+        // Get3DLinesFromObservations();
 
         bool ifExtractPlane = 0;
         std::vector<int> indexPtsSetAsPlaneCandidate;
@@ -118,13 +184,13 @@ bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
     }
 
     cv::Mat status, err;
-    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(30,30), 3);
+    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(50,50), 3);
     
     // check the error
     for (int i = 0; i < status.rows; i++) {
-        std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
+        // std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
         if (status.at<unsigned char>(i, 0) && err.at<unsigned char>(i, 0) < 30) {
-            std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
+            // std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
             indexPtsFeature.push_back(indexPtsRaw[i]);
             pts0Feature.push_back(pts0Raw[i]);
             pts1Feature.push_back(pts1Raw[i]);
@@ -139,10 +205,10 @@ bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
     parallax /= indexPtsFeature.size();
     Log_info("parallax: {}", parallax);
 
-    if (parallax < 20) {
+    if (parallax < 30) {
         return false;
     }
-    Log_info("parallax: {}", parallax);
+    Log_info("parallax > 30: {}", parallax);
     Log_info("indexPtsFeature.size(): {}", indexPtsFeature.size());
 
     // check the matching by orb
@@ -348,7 +414,7 @@ cv::Mat PlaneDetector::ComputeHomographyFromMatchedPoints(std::vector<cv::Point2
     int bestPlaneCandidate = 0;
     int maxSupporterNum = 0;
     for (int i = 0; i < supportHSet.size(); i++) {
-        std::cout << supportHSet[i] << " " << std::endl;
+        // std::cout << supportHSet[i] << " " << std::endl;
         if (supportHSet[i] > maxSupporterNum) {
             bestPlaneCandidate = i;
             maxSupporterNum = supportHSet[i];
@@ -568,6 +634,157 @@ std::vector<cv::Point3f> PlaneDetector::GetPlaneRegionUsingAnchorPointAndTexture
 
 }
 
+void PlaneDetector::Get3DLineFromTwoObservations()
+{
+    Log_info("{} {}", mRefFrame.mLandmarkPlanes.size(), mFrameVecBuffer[mTrackFrameIndex].mLandmarkPlanes.size());
+    std::cout << mRefFrame.mLandmarkPlanes[0].t() << -mRefFrame.mt.t() << std::endl
+              << mFrameVecBuffer[mTrackFrameIndex].mLandmarkPlanes[0].t() << -mFrameVecBuffer[mTrackFrameIndex].mt.t() << std::endl;
+
+    cv::Mat line0Norm = mRefFrame.mLandmarkPlanes[0].cross(mFrameVecBuffer[mTrackFrameIndex].mLandmarkPlanes[0]);
+    line0Norm = line0Norm * (1. / cv::norm(line0Norm));
+    std::cout << "line0Norm:............ " << line0Norm.t() << std::endl;
+
+    cv::Mat v1  = -mRefFrame.mt;
+    cv::Mat v2  = -mFrameVecBuffer[mTrackFrameIndex].mt;
+    std::cout << v1 << std::endl << v2 << std::endl;
+    cv::Mat Mb1 =  mRefFrame.mLandmarkPlanes[0].t() * v1;
+    cv::Mat Mb2 =  mFrameVecBuffer[mTrackFrameIndex].mLandmarkPlanes[0].t() * v2;
+    float b1    =  Mb1.at<float>(0, 0);
+    float b2    =  Mb2.at<float>(0, 0);
+    cv::Mat b   = (cv::Mat_<float>(2,1) << b1, b2);  
+    cv::Mat A   = (cv::Mat_<float>(2,2) << mRefFrame.mLandmarkPlanes[0].at<float>(1,0), mRefFrame.mLandmarkPlanes[0].at<float>(2,0),
+                   mFrameVecBuffer[mTrackFrameIndex].mLandmarkPlanes[0].at<float>(1,0), mFrameVecBuffer[mTrackFrameIndex].mLandmarkPlanes[0].at<float>(2,0));
+    std::cout << A << std::endl << b << std::endl;
+    cv::Mat p2  = A.inv() * b;
+    cv::Point3f p(0, p2.at<float>(0,0), p2.at<float>(1,0));
+    std::cout << p << std::endl;
+}
+
+void PlaneDetector::Get3DLinesFromObservations()
+{
+    std::ofstream os("save_data.txt");  
+
+    // 1. show the land mark lines in the reference frame.
+    for (int i = 0; i < mRefFrame.mLandmarkLinesIndexs.size() && i < mLandmarkNum; i++) {
+        Log_info( "mRefFrame landmark:{} [{},{}], {}, {}", i,
+            mRefFrame.mKeyLines[mRefFrame.mLandmarkLinesIndexs[i]].pt.x,  mRefFrame.mKeyLines[mRefFrame.mLandmarkLinesIndexs[i]].pt.y,
+            mRefFrame.mKeyLines[mRefFrame.mLandmarkLinesIndexs[i]].angle, mRefFrame.mKeyLines[mRefFrame.mLandmarkLinesIndexs[i]].lineLength);
+
+        cv::Mat planeNormRef = mRefFrame.mLandmarkPlanes[i];
+        cv::Mat v1  = -mRefFrame.mt;
+
+        for (int j = 0; j <= mTrackFrameIndex; j++) {
+            int indexInframe = mFrameVecBuffer[j].mLandmarkLinesIndexs[i];
+
+            if (indexInframe >= 0) {
+
+                float parallax = cv::norm(mFrameVecBuffer[j].mKeyLines[indexInframe].pt - mRefFrame.mKeyLines[mRefFrame.mLandmarkLinesIndexs[i]].pt);
+
+                std::cout << "mFrameVecBuffer landmark " << i << ":   "
+                          << mFrameVecBuffer[j].mKeyLines[indexInframe].pt << " "
+                          << mFrameVecBuffer[j].mKeyLines[indexInframe].angle << " "
+                          << mFrameVecBuffer[j].mKeyLines[indexInframe].lineLength << " " 
+                          << parallax << std::endl;
+
+                if (parallax > 150) {
+                    continue;
+                }
+
+                // get the normal vector of the observed line.
+                cv::Mat planeNorm = mFrameVecBuffer[j].mLandmarkPlanes[i];
+                cv::Mat lineNorm = planeNormRef.cross(planeNorm);
+                if (lineNorm.at<float>(0, 0) < 0) {
+                    lineNorm = -lineNorm;
+                }
+                lineNorm = lineNorm * (1. / cv::norm(lineNorm));
+
+                // get one line point (0, y, z)
+                cv::Mat v2  = -mFrameVecBuffer[j].mt;
+                cv::Mat Mb1 =  planeNormRef.t() * v1;
+                cv::Mat Mb2 =  planeNorm.t() * v2;
+                float b1    =  Mb1.at<float>(0, 0);
+                float b2    =  Mb2.at<float>(0, 0);
+                cv::Mat b   = (cv::Mat_<float>(2,1) << b1, b2);  
+                cv::Mat A   = (cv::Mat_<float>(2,2) << planeNormRef.at<float>(1,0), planeNormRef.at<float>(2,0),
+                                                          planeNorm.at<float>(1,0),    planeNorm.at<float>(2,0));
+                cv::Mat p_yz  = A.inv() * b;
+                cv::Point3f p_0yz(0, p_yz.at<float>(0,0), p_yz.at<float>(1,0));
+
+                // std::cout << planeNormRef.t() << planeNorm.t() << std::endl;
+                // std::cout << v1.t() << std::endl << v2.t() << std::endl;
+                // std::cout << A << std::endl << b << std::endl;
+                float distancePoint2Line = Distance_Point2Line(cv::Point3f(0,0,0), lineNorm, p_0yz);
+                std::cout << j << ": " << lineNorm.t() << p_0yz 
+                          << distancePoint2Line << std::endl;
+
+                os << std::to_string(mRefFrame.mKeyLines[mRefFrame.mLandmarkLinesIndexs[i]].angle) << " "
+                   << std::to_string(mFrameVecBuffer[j].mKeyLines[indexInframe].angle) << " "
+                   << std::to_string(parallax) << " "
+                   << std::to_string(distancePoint2Line) << " "
+                   << std::endl;
+            }
+            else {
+                break;
+            }
+
+        }
+
+        std::cout << std::endl;
+    }
+
+    os.close();
+}
+
+void PlaneDetector::Get3DLinesIntersectionFromTwoFrames(Frame& reff, Frame& f)
+{
+    std::map<int, std::pair<cv::Point2f, cv::Point2f> > pointPairs;
+    for (std::map<int, cv::Point2f>::const_iterator it = reff.mLandmarkIntersectPts.begin(); 
+                                  it != reff.mLandmarkIntersectPts.end(); ++it)
+    {
+        //it->first gives you the key (int)
+        //it->second gives you the mapped element (vector)
+        if (f.mLandmarkIntersectPts.find(it->first) != f.mLandmarkIntersectPts.end()) {
+            pointPairs[it->first] = std::pair<cv::Point2f, cv::Point2f>(it->second, f.mLandmarkIntersectPts[it->first]);
+        }
+    }
+
+    float fx = mK->fx;
+    float fy = mK->fy;
+    float cx = mK->cx;
+    float cy = mK->cy;
+
+    cv::Mat T1, T2, pt1, pt2, p4d;
+    cv::hconcat(reff.mR, reff.mt, T1);
+    cv::hconcat(   f.mR,    f.mt, T2);
+
+    for (std::map<int, std::pair<cv::Point2f, cv::Point2f>>::const_iterator it = pointPairs.begin(); 
+                                  it != pointPairs.end(); ++it)
+    {
+        cv::Point2f p1 = it->second.first;
+        cv::Point2f p2 = it->second.second;
+        if (p1.x < -cx || p1.x > cx*3 || p1.y < -cy || p1.y > 3*cy) {
+            continue;
+        } 
+        std::cout << "Get3DLinesIntersectionFromTwoFrames: " << it->first << it->second.first << it->second.second << std::endl;
+        p1.x = (p1.x - cx) / fx;
+        p1.y = (p1.y - cy) / fy;
+        p2.x = (p2.x - cx) / fx;
+        p2.y = (p2.y - cy) / fy;
+
+        pt1 = (cv::Mat_<float>(2,1) << p1.x, p1.y);
+        pt2 = (cv::Mat_<float>(2,1) << p2.x, p2.y);
+
+        cv::triangulatePoints(T1, T2, pt1, pt2, p4d);
+        p4d.at<float>(0, 0) = p4d.at<float>(0, 0) / p4d.at<float>(3, 0);
+        p4d.at<float>(1, 0) = p4d.at<float>(1, 0) / p4d.at<float>(3, 0);
+        p4d.at<float>(2, 0) = p4d.at<float>(2, 0) / p4d.at<float>(3, 0);
+        p4d.at<float>(3, 0) = p4d.at<float>(3, 0) / p4d.at<float>(3, 0);
+        std::cout << pt1.t() << pt2.t() << p4d.t() << std::endl;
+        break;
+    }
+
+    
+}
 
 // F(S|G).
 cv::Mat PlaneDetector::CalculateConditionalDistribution_SurfaceGrid(std::vector<cv::Point2f> ptsMatchHMat)
@@ -820,6 +1037,16 @@ float PlaneDetector::GetPatchIntense(float u, float v, int width, unsigned char*
     return res;
 }
 
+void PlaneDetector::TestFeaturePointsMatching(Frame& f1, Frame& f2)
+{
+    // int level = 0;
+    // f1.mKpsPyr[level].clear();
+    // f2.mKpsPyr[level].clear();
+    // f1.ExtractFeaturePoint();
+    // f2.ExtractFeaturePoint();
 
+    // Ptr<ORB> orb = ORB::create();
+
+}
 
 

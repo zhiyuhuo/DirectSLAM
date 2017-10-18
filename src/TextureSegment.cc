@@ -42,6 +42,29 @@ void TextureSegment::InitData(cv::Mat image, int gridX, int gridY)
     mGridY = gridY;
     mGridNumX = image.cols / mGridX;
     mGridNumY = image.rows / mGridY;
+    mWinX = mGridX;
+    mWinY = mGridNumY;
+    mGridGaborFeatures.resize(mGridNumY);
+    mTextureMap = cv::Mat(mGridNumY, mGridNumX, CV_32SC1);
+    mGrayScaleMap = cv::Mat(mGridNumY, mGridNumX, CV_32FC1);
+    for (int i = 0; i < mGridNumY; i++) {
+        mGridGaborFeatures[i].resize(mGridNumX);
+        for (int j = 0; j < mGridNumX; j++) {
+            mTextureMap.at<int>(i, j) = i * mGridNumX + j;
+        }
+    }
+    InitGaborFilters();
+}
+
+void TextureSegment::InitData(cv::Mat image, int gridX, int gridY, int winX, int winY)
+{
+    mImage = image.clone();
+    mGridX = gridX;
+    mGridY = gridY;
+    mGridNumX = image.cols / mGridX;
+    mGridNumY = image.rows / mGridY;
+    mWinX = winX;
+    mWinY = winY;
     mGridGaborFeatures.resize(mGridNumY);
     mTextureMap = cv::Mat(mGridNumY, mGridNumX, CV_32SC1);
     mGrayScaleMap = cv::Mat(mGridNumY, mGridNumX, CV_32FC1);
@@ -182,7 +205,7 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
                         if (checkMap.at<int>(y+dy[i],x+dx[i]) >= 0) {
 
                             float dist = cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+dy[i]][x+dx[i]]);
-                            if (dist < minValue && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.1)) {
+                            if (dist < minValue && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.3)) {
                                 minValue = dist;
                                 minIndex = checkMap.at<int>(y+dy[i],x+dx[i]);
                             }

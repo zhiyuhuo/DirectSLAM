@@ -37,7 +37,9 @@ CMakeFiles/DirectSLAM.dir/src/CameraIntrinsic.cc.o
  ../thirdparty/spdlog/tweakme.h
  /home/rokid/projects/DirectSLAM/src/CameraIntrinsic.cc
 CMakeFiles/DirectSLAM.dir/src/Frame.cc.o
+ ../include/CameraIntrinsic.h
  ../include/Frame.h
+ ../include/GeometryR.h
  ../include/Log.h
  ../include/Statistic.h
  ../thirdparty/spdlog/async_logger.h
@@ -143,6 +145,8 @@ CMakeFiles/DirectSLAM.dir/src/Frame.cc.o
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/imgproc_c.h
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/types_c.h
+ /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor.hpp
+ /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor/descriptor.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/ml.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect/detection_based_tracker.hpp
@@ -199,6 +203,9 @@ CMakeFiles/DirectSLAM.dir/src/Frame.cc.o
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/xfeatures2d.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/xfeatures2d/cuda.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/xfeatures2d/nonfree.hpp
+CMakeFiles/DirectSLAM.dir/src/GeometryR.cc.o
+ ../include/GeometryR.h
+ /home/rokid/projects/DirectSLAM/src/GeometryR.cc
 CMakeFiles/DirectSLAM.dir/src/Log.cc.o
  ../include/Log.h
  ../thirdparty/spdlog/async_logger.h
@@ -635,6 +642,7 @@ CMakeFiles/DirectSLAM.dir/src/Optimization.cc.o
 CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o
  ../include/CameraIntrinsic.h
  ../include/Frame.h
+ ../include/GeometryR.h
  ../include/Log.h
  ../include/PlaneDetector.h
  ../include/Statistic.h
@@ -744,6 +752,8 @@ CMakeFiles/DirectSLAM.dir/src/PlaneDetector.cc.o
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/imgproc_c.h
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/types_c.h
+ /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor.hpp
+ /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor/descriptor.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/ml.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect/detection_based_tracker.hpp
@@ -1129,6 +1139,7 @@ CMakeFiles/DirectSLAM.dir/src/TextureSegment.cc.o
 CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o
  ../include/CameraIntrinsic.h
  ../include/Frame.h
+ ../include/GeometryR.h
  ../include/Log.h
  ../include/PlaneDetector.h
  ../include/Statistic.h
@@ -1238,6 +1249,8 @@ CMakeFiles/DirectSLAM.dir/src/Viewer.cc.o
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/imgproc_c.h
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/imgproc/types_c.h
+ /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor.hpp
+ /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/line_descriptor/descriptor.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/ml.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect.hpp
  /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv2/objdetect/detection_based_tracker.hpp

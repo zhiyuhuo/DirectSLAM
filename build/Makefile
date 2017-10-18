@@ -111,19 +111,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named DirectSLAM
-
-# Build rule for target.
-DirectSLAM: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 DirectSLAM
-.PHONY : DirectSLAM
-
-# fast build rule for target.
-DirectSLAM/fast:
-	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/build
-.PHONY : DirectSLAM/fast
-
-#=============================================================================
 # Target rules for targets named patent
 
 # Build rule for target.
@@ -137,6 +124,19 @@ patent/fast:
 .PHONY : patent/fast
 
 #=============================================================================
+# Target rules for targets named DirectSLAM
+
+# Build rule for target.
+DirectSLAM: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 DirectSLAM
+.PHONY : DirectSLAM
+
+# fast build rule for target.
+DirectSLAM/fast:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/build
+.PHONY : DirectSLAM/fast
+
+#=============================================================================
 # Target rules for targets named appTestHomographyTextureBayesPlaneRecognization
 
 # Build rule for target.
@@ -148,6 +148,194 @@ appTestHomographyTextureBayesPlaneRecognization: cmake_check_build_system
 appTestHomographyTextureBayesPlaneRecognization/fast:
 	$(MAKE) -f CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build
 .PHONY : appTestHomographyTextureBayesPlaneRecognization/fast
+
+#=============================================================================
+# Target rules for targets named PlaneDetection
+
+# Build rule for target.
+PlaneDetection: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 PlaneDetection
+.PHONY : PlaneDetection
+
+# fast build rule for target.
+PlaneDetection/fast:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/build
+.PHONY : PlaneDetection/fast
+
+#=============================================================================
+# Target rules for targets named appTestPlaneDetection
+
+# Build rule for target.
+appTestPlaneDetection: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 appTestPlaneDetection
+.PHONY : appTestPlaneDetection
+
+# fast build rule for target.
+appTestPlaneDetection/fast:
+	$(MAKE) -f CMakeFiles/appTestPlaneDetection.dir/build.make CMakeFiles/appTestPlaneDetection.dir/build
+.PHONY : appTestPlaneDetection/fast
+
+PlaneDetection/CameraIntrinsic.o: PlaneDetection/CameraIntrinsic.cc.o
+
+.PHONY : PlaneDetection/CameraIntrinsic.o
+
+# target to build an object file
+PlaneDetection/CameraIntrinsic.cc.o:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/CameraIntrinsic.cc.o
+.PHONY : PlaneDetection/CameraIntrinsic.cc.o
+
+PlaneDetection/CameraIntrinsic.i: PlaneDetection/CameraIntrinsic.cc.i
+
+.PHONY : PlaneDetection/CameraIntrinsic.i
+
+# target to preprocess a source file
+PlaneDetection/CameraIntrinsic.cc.i:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/CameraIntrinsic.cc.i
+.PHONY : PlaneDetection/CameraIntrinsic.cc.i
+
+PlaneDetection/CameraIntrinsic.s: PlaneDetection/CameraIntrinsic.cc.s
+
+.PHONY : PlaneDetection/CameraIntrinsic.s
+
+# target to generate assembly for a file
+PlaneDetection/CameraIntrinsic.cc.s:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/CameraIntrinsic.cc.s
+.PHONY : PlaneDetection/CameraIntrinsic.cc.s
+
+PlaneDetection/Frame.o: PlaneDetection/Frame.cc.o
+
+.PHONY : PlaneDetection/Frame.o
+
+# target to build an object file
+PlaneDetection/Frame.cc.o:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Frame.cc.o
+.PHONY : PlaneDetection/Frame.cc.o
+
+PlaneDetection/Frame.i: PlaneDetection/Frame.cc.i
+
+.PHONY : PlaneDetection/Frame.i
+
+# target to preprocess a source file
+PlaneDetection/Frame.cc.i:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Frame.cc.i
+.PHONY : PlaneDetection/Frame.cc.i
+
+PlaneDetection/Frame.s: PlaneDetection/Frame.cc.s
+
+.PHONY : PlaneDetection/Frame.s
+
+# target to generate assembly for a file
+PlaneDetection/Frame.cc.s:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Frame.cc.s
+.PHONY : PlaneDetection/Frame.cc.s
+
+PlaneDetection/Log.o: PlaneDetection/Log.cc.o
+
+.PHONY : PlaneDetection/Log.o
+
+# target to build an object file
+PlaneDetection/Log.cc.o:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Log.cc.o
+.PHONY : PlaneDetection/Log.cc.o
+
+PlaneDetection/Log.i: PlaneDetection/Log.cc.i
+
+.PHONY : PlaneDetection/Log.i
+
+# target to preprocess a source file
+PlaneDetection/Log.cc.i:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Log.cc.i
+.PHONY : PlaneDetection/Log.cc.i
+
+PlaneDetection/Log.s: PlaneDetection/Log.cc.s
+
+.PHONY : PlaneDetection/Log.s
+
+# target to generate assembly for a file
+PlaneDetection/Log.cc.s:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Log.cc.s
+.PHONY : PlaneDetection/Log.cc.s
+
+PlaneDetection/PlaneDetector.o: PlaneDetection/PlaneDetector.cc.o
+
+.PHONY : PlaneDetection/PlaneDetector.o
+
+# target to build an object file
+PlaneDetection/PlaneDetector.cc.o:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/PlaneDetector.cc.o
+.PHONY : PlaneDetection/PlaneDetector.cc.o
+
+PlaneDetection/PlaneDetector.i: PlaneDetection/PlaneDetector.cc.i
+
+.PHONY : PlaneDetection/PlaneDetector.i
+
+# target to preprocess a source file
+PlaneDetection/PlaneDetector.cc.i:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/PlaneDetector.cc.i
+.PHONY : PlaneDetection/PlaneDetector.cc.i
+
+PlaneDetection/PlaneDetector.s: PlaneDetection/PlaneDetector.cc.s
+
+.PHONY : PlaneDetection/PlaneDetector.s
+
+# target to generate assembly for a file
+PlaneDetection/PlaneDetector.cc.s:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/PlaneDetector.cc.s
+.PHONY : PlaneDetection/PlaneDetector.cc.s
+
+PlaneDetection/TextureSegment.o: PlaneDetection/TextureSegment.cc.o
+
+.PHONY : PlaneDetection/TextureSegment.o
+
+# target to build an object file
+PlaneDetection/TextureSegment.cc.o:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/TextureSegment.cc.o
+.PHONY : PlaneDetection/TextureSegment.cc.o
+
+PlaneDetection/TextureSegment.i: PlaneDetection/TextureSegment.cc.i
+
+.PHONY : PlaneDetection/TextureSegment.i
+
+# target to preprocess a source file
+PlaneDetection/TextureSegment.cc.i:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/TextureSegment.cc.i
+.PHONY : PlaneDetection/TextureSegment.cc.i
+
+PlaneDetection/TextureSegment.s: PlaneDetection/TextureSegment.cc.s
+
+.PHONY : PlaneDetection/TextureSegment.s
+
+# target to generate assembly for a file
+PlaneDetection/TextureSegment.cc.s:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/TextureSegment.cc.s
+.PHONY : PlaneDetection/TextureSegment.cc.s
+
+PlaneDetection/Viewer.o: PlaneDetection/Viewer.cc.o
+
+.PHONY : PlaneDetection/Viewer.o
+
+# target to build an object file
+PlaneDetection/Viewer.cc.o:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Viewer.cc.o
+.PHONY : PlaneDetection/Viewer.cc.o
+
+PlaneDetection/Viewer.i: PlaneDetection/Viewer.cc.i
+
+.PHONY : PlaneDetection/Viewer.i
+
+# target to preprocess a source file
+PlaneDetection/Viewer.cc.i:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Viewer.cc.i
+.PHONY : PlaneDetection/Viewer.cc.i
+
+PlaneDetection/Viewer.s: PlaneDetection/Viewer.cc.s
+
+.PHONY : PlaneDetection/Viewer.s
+
+# target to generate assembly for a file
+PlaneDetection/Viewer.cc.s:
+	$(MAKE) -f CMakeFiles/PlaneDetection.dir/build.make CMakeFiles/PlaneDetection.dir/PlaneDetection/Viewer.cc.s
+.PHONY : PlaneDetection/Viewer.cc.s
 
 app/appTestHomographyTextureBayesPlaneRecognization.o: app/appTestHomographyTextureBayesPlaneRecognization.cc.o
 
@@ -175,6 +363,33 @@ app/appTestHomographyTextureBayesPlaneRecognization.s: app/appTestHomographyText
 app/appTestHomographyTextureBayesPlaneRecognization.cc.s:
 	$(MAKE) -f CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/build.make CMakeFiles/appTestHomographyTextureBayesPlaneRecognization.dir/app/appTestHomographyTextureBayesPlaneRecognization.cc.s
 .PHONY : app/appTestHomographyTextureBayesPlaneRecognization.cc.s
+
+app/appTestPlaneDetection.o: app/appTestPlaneDetection.cc.o
+
+.PHONY : app/appTestPlaneDetection.o
+
+# target to build an object file
+app/appTestPlaneDetection.cc.o:
+	$(MAKE) -f CMakeFiles/appTestPlaneDetection.dir/build.make CMakeFiles/appTestPlaneDetection.dir/app/appTestPlaneDetection.cc.o
+.PHONY : app/appTestPlaneDetection.cc.o
+
+app/appTestPlaneDetection.i: app/appTestPlaneDetection.cc.i
+
+.PHONY : app/appTestPlaneDetection.i
+
+# target to preprocess a source file
+app/appTestPlaneDetection.cc.i:
+	$(MAKE) -f CMakeFiles/appTestPlaneDetection.dir/build.make CMakeFiles/appTestPlaneDetection.dir/app/appTestPlaneDetection.cc.i
+.PHONY : app/appTestPlaneDetection.cc.i
+
+app/appTestPlaneDetection.s: app/appTestPlaneDetection.cc.s
+
+.PHONY : app/appTestPlaneDetection.s
+
+# target to generate assembly for a file
+app/appTestPlaneDetection.cc.s:
+	$(MAKE) -f CMakeFiles/appTestPlaneDetection.dir/build.make CMakeFiles/appTestPlaneDetection.dir/app/appTestPlaneDetection.cc.s
+.PHONY : app/appTestPlaneDetection.cc.s
 
 app/patent.o: app/patent.cc.o
 
@@ -256,6 +471,33 @@ src/Frame.s: src/Frame.cc.s
 src/Frame.cc.s:
 	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/Frame.cc.s
 .PHONY : src/Frame.cc.s
+
+src/GeometryR.o: src/GeometryR.cc.o
+
+.PHONY : src/GeometryR.o
+
+# target to build an object file
+src/GeometryR.cc.o:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/GeometryR.cc.o
+.PHONY : src/GeometryR.cc.o
+
+src/GeometryR.i: src/GeometryR.cc.i
+
+.PHONY : src/GeometryR.i
+
+# target to preprocess a source file
+src/GeometryR.cc.i:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/GeometryR.cc.i
+.PHONY : src/GeometryR.cc.i
+
+src/GeometryR.s: src/GeometryR.cc.s
+
+.PHONY : src/GeometryR.s
+
+# target to generate assembly for a file
+src/GeometryR.cc.s:
+	$(MAKE) -f CMakeFiles/DirectSLAM.dir/build.make CMakeFiles/DirectSLAM.dir/src/GeometryR.cc.s
+.PHONY : src/GeometryR.cc.s
 
 src/Log.o: src/Log.cc.o
 
@@ -425,14 +667,37 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... patent"
 	@echo "... edit_cache"
 	@echo "... DirectSLAM"
-	@echo "... patent"
-	@echo "... appTestHomographyTextureBayesPlaneRecognization"
 	@echo "... rebuild_cache"
+	@echo "... appTestHomographyTextureBayesPlaneRecognization"
+	@echo "... PlaneDetection"
+	@echo "... appTestPlaneDetection"
+	@echo "... PlaneDetection/CameraIntrinsic.o"
+	@echo "... PlaneDetection/CameraIntrinsic.i"
+	@echo "... PlaneDetection/CameraIntrinsic.s"
+	@echo "... PlaneDetection/Frame.o"
+	@echo "... PlaneDetection/Frame.i"
+	@echo "... PlaneDetection/Frame.s"
+	@echo "... PlaneDetection/Log.o"
+	@echo "... PlaneDetection/Log.i"
+	@echo "... PlaneDetection/Log.s"
+	@echo "... PlaneDetection/PlaneDetector.o"
+	@echo "... PlaneDetection/PlaneDetector.i"
+	@echo "... PlaneDetection/PlaneDetector.s"
+	@echo "... PlaneDetection/TextureSegment.o"
+	@echo "... PlaneDetection/TextureSegment.i"
+	@echo "... PlaneDetection/TextureSegment.s"
+	@echo "... PlaneDetection/Viewer.o"
+	@echo "... PlaneDetection/Viewer.i"
+	@echo "... PlaneDetection/Viewer.s"
 	@echo "... app/appTestHomographyTextureBayesPlaneRecognization.o"
 	@echo "... app/appTestHomographyTextureBayesPlaneRecognization.i"
 	@echo "... app/appTestHomographyTextureBayesPlaneRecognization.s"
+	@echo "... app/appTestPlaneDetection.o"
+	@echo "... app/appTestPlaneDetection.i"
+	@echo "... app/appTestPlaneDetection.s"
 	@echo "... app/patent.o"
 	@echo "... app/patent.i"
 	@echo "... app/patent.s"
@@ -442,6 +707,9 @@ help:
 	@echo "... src/Frame.o"
 	@echo "... src/Frame.i"
 	@echo "... src/Frame.s"
+	@echo "... src/GeometryR.o"
+	@echo "... src/GeometryR.i"
+	@echo "... src/GeometryR.s"
 	@echo "... src/Log.o"
 	@echo "... src/Log.i"
 	@echo "... src/Log.s"
