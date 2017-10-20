@@ -89,8 +89,8 @@ int main(int argc, char** argv)
                     cv::Mat R = cv::Mat::eye(3,3,CV_32FC1);
                     cv::Mat t = cv::Mat::zeros(3,1,CV_32FC1);
                     if (resRotVecs[nImg].size() > 0 && resTransVecs[nImg].size() > 0) {
-                        std::memcpy(R.ptr<float>(0), resRotVecs[nImg].data(), resTransVecs[nImg].size()*sizeof(float));
-                        std::memcpy(t.ptr<float>(0), resRotVecs[nImg].data(), resTransVecs[nImg].size()*sizeof(float));
+                        std::memcpy(R.ptr<float>(0), resRotVecs[nImg].data(), resRotVecs[nImg].size()*sizeof(float));
+                        std::memcpy(t.ptr<float>(0), resTransVecs[nImg].data(), resTransVecs[nImg].size()*sizeof(float));
                     }
                     pd->Detect(img_input, R, t);
 
@@ -101,8 +101,8 @@ int main(int argc, char** argv)
                         cv::Mat R = cv::Mat::eye(3,3,CV_32FC1);
                         cv::Mat t = cv::Mat::zeros(3,1,CV_32FC1);
                         if (resRotVecs[nImg].size() > 0 && resTransVecs[nImg].size() > 0) {
-                            std::memcpy(R.ptr<float>(0), resRotVecs[nImg].data(), resTransVecs[nImg].size()*sizeof(float));
-                            std::memcpy(t.ptr<float>(0), resRotVecs[nImg].data(), resTransVecs[nImg].size()*sizeof(float));
+                            std::memcpy(R.ptr<float>(0), resRotVecs[nImg].data(), resRotVecs[nImg].size()*sizeof(float));
+                            std::memcpy(t.ptr<float>(0), resTransVecs[nImg].data(), resTransVecs[nImg].size()*sizeof(float));
                         }
                         pd->Detect(img_input, R, t);
                     }

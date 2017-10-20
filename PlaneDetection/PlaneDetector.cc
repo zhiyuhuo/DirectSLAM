@@ -1,5 +1,31 @@
 #include "PlaneDetector.h"
 
+inline float DistancePixel2Line(cv::Point2f p, float a, float b, float c)
+{
+    return fabs(p.x*a + p.y*b + c) / sqrt(a*a+b*b);
+}
+
+inline float SSD88(cv::Mat& img1, cv::Mat& img2, cv::Point2f p1, cv::Point2f p2)
+{
+    int x1 = int(p1.x+0.5);
+    int y1 = int(p1.y+0.5);
+    int x2 = int(p2.x+0.5);
+    int y2 = int(p2.y+0.5);
+
+    unsigned char* pimg1 = img1.ptr<unsigned char>(0);
+    unsigned char* pimg2 = img2.ptr<unsigned char>(0);
+    const int step = img1.cols;
+
+    float res = 0;
+    for (int y = -3; y <=4; y++) {
+        for (int x = -3; x <=4; x++) {
+            res += fabs(pimg1[(y1+y)*step+(x1+x)] - pimg2[(y2+y)*step+(x2+x)]);
+        }
+    }
+    res /= 64;
+    return res;
+}
+
 PlaneDetector::PlaneDetector(CameraIntrinsic* K)
 {
     mK = K;
@@ -25,13 +51,18 @@ bool PlaneDetector::AddFrameToBuffer(Frame& f)
 
 PlaneDetectionState PlaneDetector::Detect(const cv::Mat& image, cv::Mat R_, cv::Mat t_)
 {
+    cv::Mat frame = image.clone();
+    cv::GaussianBlur(image, frame, cv::Size(0, 0), 3);
+    cv::addWeighted(image, 1.5, frame, -0.5, 0, frame);
+
     Frame f(image, R_, t_);
 
     if (mState == PlaneDetectionState::VOID) {
         SetRefFrame(f);
         TIME_BEGIN();
-        mTextureSeg.InitData(mRefFrame.mImg, 10, 10);
+        mTextureSeg.InitData(mRefFrame.mImg, 20, 20);
         mTextureSeg.ComputeGridFeatures();
+        mTextureSeg.GetTextureRegions();
         TIME_END("Segment Ref Frame Image ");
         mState = PlaneDetectionState::TRACKING;
     }
@@ -44,8 +75,8 @@ PlaneDetectionState PlaneDetector::Detect(const cv::Mat& image, cv::Mat R_, cv::
     else if (mState == PlaneDetectionState::DETECTING) {
         bool resDetect = false;
         TIME_BEGIN();
-        resDetect = DetectMatchByOpticalFlow(mRefFrame, mFramesBuffer[mTrackFrameIndex]);
-        TIME_END("DetectMatchByOpticalFlow");
+        resDetect = DetectMatch(mRefFrame, mFramesBuffer[mTrackFrameIndex]);
+        TIME_END("DetectMatch");
         if (resDetect == true) {
             Log_info("mTrackFrameIndex: {}", mTrackFrameIndex);
             mState = PlaneDetectionState::REFINING;
@@ -56,6 +87,8 @@ PlaneDetectionState PlaneDetector::Detect(const cv::Mat& image, cv::Mat R_, cv::
         cv::waitKey(-1);
     }
     else if (mState == PlaneDetectionState::REFINING) {
+
+        DetectMatch(mRefFrame, mFramesBuffer[mTrackFrameIndex-1]);
 
         bool ifExtractPlane = 0;
         std::vector<int> indexPtsSetAsPlaneCandidate;
@@ -81,7 +114,7 @@ PlaneDetectionState PlaneDetector::Detect(const cv::Mat& image, cv::Mat R_, cv::
         Log_info("Go to the failed state.");
     }
     else if (mState == PlaneDetectionState::END ){
-        // Viewer::DrawAR(mK, f, mMainPlane, mAnchorPoint);
+        Viewer::DrawAR(mK, f, mMainPlane, mAnchorPoint);
         std::vector<cv::Point3f> planeGrids = GetPlaneRegionUsingAnchorPointAndTexture();
         Viewer::DrawPlane(mK, f, mMainPlane, planeGrids);
         cv::waitKey(-1); 
@@ -90,13 +123,14 @@ PlaneDetectionState PlaneDetector::Detect(const cv::Mat& image, cv::Mat R_, cv::
     return mState;
 }
 
-bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
+bool PlaneDetector::DetectMatch(Frame& ref, Frame& f)
 {
     cv::Mat imageref = ref.mImg;
     cv::Mat imagef   = f.mImg;
     std::vector<cv::KeyPoint> kpsref = ref.mKps;
 
     std::vector<int>         indexPtsRaw, indexPtsFeature, indexPts, indexPtsPlane;
+    std::vector<int>         label0Raw, label1Raw; 
     std::vector<cv::Point2f> pts0Raw, pts1Raw;
     std::vector<cv::Point2f> pts0Feature, pts1Feature;
     std::vector<cv::Point2f> pts0, pts1;
@@ -105,10 +139,26 @@ bool PlaneDetector::DetectMatchByOpticalFlow(Frame& ref, Frame& f)
     for (int i = 0; i < kpsref.size(); i++) {
         pts0Raw.push_back(kpsref[i].pt);
         indexPtsRaw.push_back(i);
+        label0Raw.push_back(kpsref[i].class_id);
     }
 
     cv::Mat status, err;
-    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(60,60), 3);
+
+    // --- optical flow tracking
+    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(30,30), 8);
+    // --- optical flow tracking end
+
+    // --- epipolar search tracking
+    // if (f.mKps.size() <=0 ) {
+    //     f.ExtractFeaturePoint();
+    // }
+    // for (int i = 0; i < f.mKps.size(); i++) {
+    //     pts1Raw.push_back(f.mKps[i].pt);
+    //     label1Raw.push_back(f.mKps[i].class_id);
+    // }
+    // EpipolarLineSearchTracking(imageref, imagef, ref.mR, ref.mt, f.mR, f.mt,
+    //                            pts0Raw, pts1Raw, label0Raw, label1Raw, status, err);
+    // --- epipolar seatch tracking end
     
     // check the error
     for (int i = 0; i < status.rows; i++) {
@@ -316,7 +366,7 @@ bool PlaneDetector::RecoverPlaneFromPointPairsAndRT(std::vector<cv::Point2f> pts
     cv::Mat T0, T1, p4d;
     cv::hconcat(R0, t0, T0);
     cv::hconcat(R1, t1, T1);
-    // std::cout << Kh << std::endl << T0 << std::endl << T1 << std::endl;
+    std::cout << Kh << std::endl << T0 << std::endl << T1 << std::endl;
     T0 = Kh * T0;
     T1 = Kh * T1;
     cv::triangulatePoints(T0, T1, pts0, pts1, p4d);
@@ -353,7 +403,7 @@ bool PlaneDetector::RecoverPlaneFromPointPairsAndRT(std::vector<cv::Point2f> pts
 }
 
 float PlaneDetector::GetDistPoint2Plane(cv::Point3f pt, std::vector<float> plane) {
-    return abs(pt.x*plane[0] + pt.y*plane[1] + pt.z*plane[2] + plane[3]) / sqrt(plane[0]*plane[0] + plane[1]*plane[1] + plane[2]*plane[2]);
+    return fabs(pt.x*plane[0] + pt.y*plane[1] + pt.z*plane[2] + plane[3]) / sqrt(plane[0]*plane[0] + plane[1]*plane[1] + plane[2]*plane[2]);
 }
 
 float PlaneDetector::RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std::vector<float>& mainPlane, std::vector<float>& anchorPoint)
@@ -405,10 +455,10 @@ float PlaneDetector::RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std
     // std::cout << u << std::endl << w << std::endl << vt << std::endl;
     cv::Mat normal = vt.t().col(2);
     float d = -( c.x*normal.at<float>(0,0) + c.y*normal.at<float>(1,0) + c.z*normal.at<float>(2,0) );
-    // std::cout << normal.t() << d << std::endl;
     normal = normal / d;
     d = d / d;
 
+    std::cout << "normal and d:" << normal.t() << d << std::endl;
     mainPlane.resize(4);
     mainPlane[0] = normal.at<float>(0,0);
     mainPlane[1] = normal.at<float>(1,0);
@@ -425,7 +475,7 @@ float PlaneDetector::RecoverPlaneFrom3DPoints(std::vector<cv::Point3f> p3ds, std
     for (int i = 0; i < p3ds.size(); i++) {
         float dist = GetDistPoint2Plane(p3ds[i], mainPlane);
         meanDistance += dist;
-        // std::cout << "p3d: " << p3ds[i] << " " << dist << std::endl;
+        std::cout << "p3d: " << p3ds[i] << " " << dist << std::endl;
     }   
     std::cout << "meanDistance: " << meanDistance/p3ds.size() << std::endl;
 
@@ -439,8 +489,8 @@ float PlaneDetector::GetGridProb(cv::Point2f gridCenter, cv::Point2f pt, float g
     float dist = cv::norm(gridCenter - pt);
     if (dist < R) {
         res = sqrt( (R - dist/2) / R );
-    } else if ( dist < 1.5*R )  {
-        res = 0.707 * ((1.5*R-dist) / (0.5*R)) ;
+    } else if ( dist < 2.0*R )  {
+        res = 0.707 * ((2.0*R-dist) / (2.0*R-R)) ;
     } else {
         res = 0;
     }
@@ -673,6 +723,31 @@ std::vector<cv::Point3f> PlaneDetector::GetPlaneRegionUsingAnchorPointAndTexture
     std::vector<float> anchorPoint = mAnchorPoint;
     int winnerTextureID = mWinnerTextureID;
 
+    // Here we fill the grids 
+    std::cout << "mTextureSeg.mTextureRegionPortions[winnerTextureID]: " << mTextureSeg.mTextureRegionPortions[winnerTextureID] << std::endl;
+    // if (mTextureSeg.mTextureRegionPortions[winnerTextureID] > 0.5) {
+    //     for (int y = 0; y < mTextureSeg.mGridNumY; y++) {
+    //         for (int x = 0; x < mTextureSeg.mGridNumX; x++) {
+
+    //             // std::cout << mTextureSeg.mTextureRegions[winnerTextureID].first.x / (mTextureSeg.mGridX) 
+    //             //           << mTextureSeg.mTextureRegions[winnerTextureID].second.x / (mTextureSeg.mGridX) 
+    //             //           << mTextureSeg.mTextureRegions[winnerTextureID].first.y / (mTextureSeg.mGridY) 
+    //             //           << mTextureSeg.mTextureRegions[winnerTextureID].second.y / (mTextureSeg.mGridY) 
+
+    //             if (
+    //                     x > mTextureSeg.mTextureRegions[winnerTextureID].first.x / (mTextureSeg.mGridX) 
+    //                 &&  x < mTextureSeg.mTextureRegions[winnerTextureID].second.x / (mTextureSeg.mGridX) 
+    //                 &&  y > mTextureSeg.mTextureRegions[winnerTextureID].first.y / (mTextureSeg.mGridY) 
+    //                 &&  y < mTextureSeg.mTextureRegions[winnerTextureID].second.y / (mTextureSeg.mGridY) 
+    //             ) 
+    //             {
+    //                 std::cout << x << " " << y << std::endl;
+    //                 mTextureSeg.mTextureMap.at<int>(y, x) = winnerTextureID;
+    //             }
+    //         }
+    //     }
+    // }
+
     cv::Mat Rref = mRefFrame.mR;
     cv::Mat tref = mRefFrame.mt;
 
@@ -720,4 +795,202 @@ std::vector<cv::Point3f> PlaneDetector::GetPlaneRegionUsingAnchorPointAndTexture
 
     return targetGridsProjections;
 
+}
+
+void PlaneDetector::EpipolarLineSearchBetweenTwoFrames(Frame& f1, Frame& f2)
+{
+    // compute intrinsic and extrinsic parameter and get F matrix
+    cv::Mat R1 = f1.mR;
+    cv::Mat t1 = f1.mt;
+    cv::Mat R2 = f2.mR;
+    cv::Mat t2 = f2.mt;
+    cv::Mat R = R1 * R2.t();
+    cv::Mat t = R1 * R2.t() * (-t2) + t1;
+    cv::Mat K = (cv::Mat_<float>(3,3) << mK->fx, 0, mK->cx, 0, mK->fy, mK->cy, 0, 0, 1);
+    // compute f matrix
+    // A = K * R' * t
+    // C = [0 -A(3) A(2); A(3) 0 -A(1); -A(2) A(1) 0]
+    // ret = (inverse(K))' * R * K' * C
+    cv::Mat A = K * R.t() * t;
+    cv::Mat C = (cv::Mat_<float>(3,3) <<                0, -A.at<float>(2,0),  A.at<float>(1,0),
+                                         A.at<float>(2,0),                0,  -A.at<float>(0,0),
+                                        -A.at<float>(1,0),  A.at<float>(0,0),                0 );
+    cv::Mat F = (K.inv()).t() * R * K.t() * C;
+
+    std::cout << K << std::endl << R << t.t() << std::endl << A << std::endl << C << std::endl << F << std::endl;
+
+    // get the 2d points in f1 and f2
+    std::vector<cv::Point2f> pts1,   pts2;
+    std::vector<int>       label1, label2;
+    for (int i = 0; i < f1.mKps.size(); i++) {
+        pts1.push_back(f1.mKps[i].pt);
+        label1.push_back(f1.mKps[i].class_id);
+    }
+
+    f2.ExtractFeaturePoint();
+    for (int i = 0; i < f2.mKps.size(); i++) {
+        pts2.push_back(f2.mKps[i].pt);
+        label2.push_back(f2.mKps[i].class_id);
+    }
+
+    cv::Mat Epi;
+    cv::computeCorrespondEpilines(pts1, 1, F, Epi);
+    std::cout << Epi << std::endl;
+
+    #ifndef __ANDROID__
+    cv::Mat img4Show = cv::Mat::zeros(f1.mImg.rows, f1.mImg.cols*2, CV_8UC1);
+    f1.mImg.copyTo(img4Show(cv::Rect(0, 0, f1.mImg.cols, f1.mImg.rows)));
+    f2.mImg.copyTo(img4Show(cv::Rect(f1.mImg.cols, 0, f1.mImg.cols, f1.mImg.rows)));
+    cv::cvtColor(img4Show, img4Show, CV_GRAY2BGR);
+    #endif
+
+    float a, b, c, xl, yl, xr, yr;
+    for (int i = 0; i < f1.mKps.size(); i++) {
+        a = Epi.at<float>(i,0);
+        b = Epi.at<float>(i,1);
+        c = Epi.at<float>(i,2);
+        xl = 0;
+        yl = (-c - a*xl) / b;
+        xr = f2.mImg.cols;
+        yr = (-c - a*xr) / b;
+        // cv::line(img4Show, cv::Point2f(xl, yl)+cv::Point2f(f1.mImg.cols,0), 
+        //                    cv::Point2f(xr, yr)+cv::Point2f(f1.mImg.cols,0),
+        //                    cv::Scalar(0, 255, 0), 1, CV_AA ); 
+
+        float minSSD = 999999.;
+        int   minID = -1;
+        std::vector<bool> ifTracked(f2.mKps.size(), false);
+        for (int j = 0; j < f2.mKps.size(); j++) {
+            if (
+               !ifTracked[j]
+               && DistancePixel2Line(f2.mKps[j].pt, a, b, c) < 20
+            //    && f2.mKps[j].class_id == f1.mKps[i].class_id
+               && cv::norm(f1.mKps[i].pt - f2.mKps[j].pt) < 50
+               ) {
+                // cv::circle(img4Show, f2.mKps[j].pt + cv::Point2f(f1.mImg.cols,0), 3, cv::Scalar(255, 0, 0), 1);
+                float ssd = SSD88(f1.mImg, f2.mImg, f1.mKps[i].pt, f2.mKps[j].pt);
+                // std::cout << ssd << std::endl;
+                if (ssd < minSSD) {
+                    minSSD = ssd;
+                    minID  = j;
+                }
+            }
+        }
+        if (minID >= 0 && minSSD < 10) {
+            ifTracked[minID] = true;
+            #ifndef __ANDROID__
+            cv::circle(img4Show, f1.mKps[i].pt, 3, cv::Scalar(255, 0, 0), 1);
+            cv::circle(img4Show, f2.mKps[minID].pt + cv::Point2f(f1.mImg.cols,0), 3, cv::Scalar(0, 128, 255), 1);
+            cv::line(img4Show, f1.mKps[i].pt, f2.mKps[minID].pt+cv::Point2f(f1.mImg.cols,0),
+                        cv::Scalar(0, 255, 0), 1, CV_AA ); 
+            cv::imshow("Epipolar line", img4Show);
+            cv::waitKey(-1);
+            #endif
+        }
+    }
+
+    #ifndef __ANDROID__
+    cv::imshow("Epipolar line", img4Show);
+    cv::waitKey(-1);
+    #endif
+}
+
+void PlaneDetector::EpipolarLineSearchTracking(cv::Mat& img1,                  cv::Mat& img2,
+                                      cv::Mat R1, cv::Mat t1,         cv::Mat R2, cv::Mat t2,
+                               std::vector<cv::Point2f> pts1, std::vector<cv::Point2f>& pts2,
+                                     std::vector<int> label1,        std::vector<int> label2,
+                                             cv::Mat& status,                   cv::Mat& err)
+{
+    // compute intrinsic and extrinsic parameter and get F matrix
+    cv::Mat R = R1 * R2.t();
+    cv::Mat t = R1 * R2.t() * (-t2) + t1;
+    cv::Mat K = (cv::Mat_<float>(3,3) << mK->fx, 0, mK->cx, 0, mK->fy, mK->cy, 0, 0, 1);
+    // compute f matrix
+    // A = K * R' * t
+    // C = [0 -A(3) A(2); A(3) 0 -A(1); -A(2) A(1) 0]
+    // ret = (inverse(K))' * R * K' * C
+    cv::Mat A = K * R.t() * t;
+    cv::Mat C = (cv::Mat_<float>(3,3) <<                0, -A.at<float>(2,0),  A.at<float>(1,0),
+                                         A.at<float>(2,0),                0,  -A.at<float>(0,0),
+                                        -A.at<float>(1,0),  A.at<float>(0,0),                0 );
+    cv::Mat F = (K.inv()).t() * R * K.t() * C;
+
+    std::cout << K << std::endl << R << t.t() << std::endl << A << std::endl << C << std::endl << F << std::endl;
+
+    cv::Mat Epi;
+    cv::computeCorrespondEpilines(pts1, 1, F, Epi);
+    std::cout << Epi << std::endl;
+
+    #ifndef __ANDROID__
+    cv::Mat img4Show = cv::Mat::zeros(img1.rows, img2.cols*2, CV_8UC1);
+    img1.copyTo(img4Show(cv::Rect(0, 0, img1.cols, img1.rows)));
+    img2.copyTo(img4Show(cv::Rect(img1.cols, 0, img1.cols, img1.rows)));
+    cv::cvtColor(img4Show, img4Show, CV_GRAY2BGR);
+    #endif
+
+    float a, b, c, xl, yl, xr, yr;
+    std::vector<cv::Point2f> pts_res(pts1.size());
+    status = cv::Mat::zeros(pts1.size(), 1, CV_8UC1);
+    err    = cv::Mat::zeros(pts1.size(), 1, CV_8UC1);
+
+    for (int i = 0; i < pts1.size(); i++) {
+        a = Epi.at<float>(i,0);
+        b = Epi.at<float>(i,1);
+        c = Epi.at<float>(i,2);
+        xl = 0;
+        yl = (-c - a*xl) / b;
+        xr = img2.cols;
+        yr = (-c - a*xr) / b;
+        // cv::line(img4Show, cv::Point2f(xl, yl)+cv::Point2f(img1.cols,0), 
+        //                    cv::Point2f(xr, yr)+cv::Point2f(img1.cols,0),
+        //                    cv::Scalar(0, 255, 0), 1, CV_AA ); 
+
+        float minSSD = 999999.;
+        int   minID = -1;
+        std::vector<bool> ifTracked(pts2.size(), false);
+        for (int j = 0; j < pts2.size(); j++) {
+            if (
+               !ifTracked[j]
+               && DistancePixel2Line(pts2[j], a, b, c) < 10
+               && label2[j] == label1[i]
+               && cv::norm(pts1[i] - pts2[j]) < 50
+               ) {
+                // cv::circle(img4Show, pts2[j] + cv::Point2f(img1.cols,0), 3, cv::Scalar(255, 0, 0), 1);
+                float ssd = SSD88(img1, img2, pts1[i], pts2[j]);
+                // std::cout << ssd << std::endl;
+                if (ssd < minSSD) {
+                    minSSD = ssd;
+                    minID  = j;
+                }
+            }
+        }
+        std::cout << minID << " " << minSSD << std::endl;
+        if (minID >= 0 && minSSD < 10) {
+            status.at<unsigned char>(i,0) = 1;
+            err.at<unsigned char>(i,0) = minSSD;
+            ifTracked[minID] = true;
+            pts_res[i] = pts2[minID];
+            #ifndef __ANDROID__
+            cv::circle(img4Show, pts1[i], 3, cv::Scalar(255, 0, 0), 1);
+            cv::circle(img4Show, pts2[minID] + cv::Point2f(img1.cols,0), 3, cv::Scalar(0, 0, 255), 1);
+            cv::line(  img4Show, pts1[i], pts2[minID]+cv::Point2f(img1.cols,0), cv::Scalar(0, 255, 0), 1, CV_AA ); 
+            #endif
+        }
+
+        #ifndef __ANDROID__
+        if (mState == PlaneDetectionState::REFINING) {
+            cv::imshow("Epipolar line", img4Show);
+            cv::waitKey(-1);
+        }
+        #endif
+    }
+
+    #ifndef __ANDROID__
+    if (mState == PlaneDetectionState::REFINING) {
+        cv::imshow("Epipolar line", img4Show);
+        cv::waitKey(-1);
+    }
+    #endif
+
+    pts2 = pts_res;
 }

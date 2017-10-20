@@ -22,6 +22,8 @@ public:
     int mGridNumX;
     int mGridNumY;
     int mTextureID;
+    std::vector<std::pair<cv::Point2f, cv::Point2f> > mTextureRegions;
+    std::vector<float> mTextureRegionPortions; 
 
     std::vector<cv::Mat> mGaborFilters;
 
@@ -31,7 +33,7 @@ public:
     void ComputeGridFeatures();
     cv::Mat ComputeAGridFeature(cv::Mat image);
     cv::Mat ConnectSimilarGrids();
-
+    void GetTextureRegions();
 };
 
 #endif

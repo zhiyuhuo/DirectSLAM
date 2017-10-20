@@ -60,7 +60,7 @@ public: // functions
     bool   AddFrameToBuffer(Frame& f);
 
     // OF tracking
-    bool   DetectMatchByOpticalFlow(Frame& ref, Frame& f);
+    bool   DetectMatch(Frame& ref, Frame& f);
     bool   DetectMatchByBatchOpticalFlow(Frame& ref, std::vector<Frame>& fSet);
 
     // calculate histogram from point pairs by RANSAC
@@ -106,6 +106,14 @@ public: // functions
 
     // get plane region. for drawing
     std::vector<cv::Point3f> GetPlaneRegionUsingAnchorPointAndTexture();
+
+    // epipolar line searching between two frames
+    void EpipolarLineSearchBetweenTwoFrames(Frame& f1, Frame& f2);
+    void EpipolarLineSearchTracking(cv::Mat& img1,                 cv::Mat& img2,
+                                    cv::Mat R1, cv::Mat t1,        cv::Mat R2, cv::Mat t2,
+                                    std::vector<cv::Point2f> pts1, std::vector<cv::Point2f>& pts2,
+                                    std::vector<int> label1,       std::vector<int> label2,
+                                    cv::Mat& status,               cv::Mat& err); //cv::cal(imageref, imagef, pts0Raw, pts1Raw, status, err);
 };
 
 #endif

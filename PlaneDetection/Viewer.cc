@@ -217,7 +217,7 @@ void Viewer::DrawPlane(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlan
     sY = sY / ly;
 
     cv::Point3f Op(0, 0, -d/c);
-    float edgeLengh = 0.075;
+    float edgeLengh = 0.05;
     float eL = edgeLengh;
 
     cv::Point3f LT, RT, LB, RB;

@@ -35,6 +35,7 @@ class Viewer
         void drawPixelsDepth();
         void drawMapAxis();
 
+        static void DrawBigPlane(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane, std::vector<cv::Point3f> points);
         static void DrawPlane(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane, std::vector<cv::Point3f> points);
         static void DrawSquare(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane, float sqaureCentroidX, float sqaureCentroidY);
         static void DrawAR(CameraIntrinsic* K, Frame& f, std::vector<float> mainPlane);

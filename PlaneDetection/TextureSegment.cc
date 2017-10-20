@@ -7,7 +7,7 @@ TextureSegment::TextureSegment(cv::Mat image, int gridX, int gridY)
 
 void TextureSegment::InitGaborFilters()
 {
-    cv::Size ksize(5, 5);
+    cv::Size ksize(7, 7);
     double pi_value = 3.14159265;
     std::vector<double> sigma = {1, 2, 3, 4, 5};
     std::vector<double> theta = {pi_value * 0.125, pi_value * 0.25, pi_value * 0.375, pi_value * 0.50, 
@@ -114,7 +114,7 @@ cv::Mat TextureSegment::ComputeAGridFeature(cv::Mat img)
 
 cv::Mat TextureSegment::ConnectSimilarGrids()
 {
-    float Threshold = 5.0;
+    float Threshold = 8.0;
     int IterMax = 30;
 
     bool ifConverge = false;
@@ -150,7 +150,7 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
     for (int i = 1; i < seeds.size(); i++) {
         for (int j = 0; j < i; j++) {
             if ( cv::norm(mGridGaborFeatures[seeds[j].y][seeds[j].x], mGridGaborFeatures[seeds[i].y][seeds[i].x]) < Threshold
-                && abs(mGrayScaleMap.at<float>(seeds[j].y,seeds[j].x) - mGrayScaleMap.at<float>(seeds[i].y,seeds[i].x)) < 0.1 ) {             
+                && fabs(mGrayScaleMap.at<float>(seeds[j].y,seeds[j].x) - mGrayScaleMap.at<float>(seeds[i].y,seeds[i].x)) < 0.1 ) {             
                 classIDSeeds[i] = classIDSeeds[j];
             }
         }
@@ -177,20 +177,22 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
             for (int x = 1; x < mGridNumX-1; x++) {
                 if (checkMap.at<int>(y,x) < 0) {
                     float minValue = 999999.;
-                    int minIndex = -1;
+                    int   minIndex = -1;
                     for (int i = 0; i < 4; i++) {
                         if (checkMap.at<int>(y+dy[i],x+dx[i]) >= 0) {
 
-                            float dist = cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+dy[i]][x+dx[i]]);
-                            if (dist < minValue && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.3)) {
-                                minValue = dist;
+                            float distGabor = cv::norm(mGridGaborFeatures[y][x] - mGridGaborFeatures[y+dy[i]][x+dx[i]]);
+                            float distColor = fabs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]));
+                            std::cout << distGabor << " " << distColor << std::endl;
+                            if (distGabor < minValue && distColor < 0.05) {
+                                minValue = distGabor;
                                 minIndex = checkMap.at<int>(y+dy[i],x+dx[i]);
                             }
 
                         }
                     }
 
-                    if ( minValue < Threshold )
+                    if ( minValue < 2*Threshold )
                     {
                         checkMap.at<int>(y,x) = minIndex;
                         ifChange = true;
@@ -220,10 +222,59 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
     for (int y = 1; y < mGridNumY-1; y++) {
         for (int x = 1; x < mGridNumX-1; x++) {
             if (checkMap.at<int>(y, x) >= 0) {
-                cv::circle(imgShow, cv::Point2i(x*mGridX+mGridX/2, y*mGridY+mGridY/2), std::min(mGridX, mGridY)/8, colours[checkMap.at<int>(y, x)], 1);
+                cv::circle(imgShow, cv::Point2i(x*mGridX+mGridX/2, y*mGridY+mGridY/2), 
+                                    std::min(mGridX, mGridY)/8, colours[checkMap.at<int>(y, x)], 1);
             }
         }
     }
     cv::imshow("image segmented", imgShow);
     #endif
+}
+
+void TextureSegment::GetTextureRegions()
+{
+    mTextureRegions.resize(mTextureID+1);
+    mTextureRegionPortions.resize(mTextureID+1, 0);
+    for (int i = 0; i < mTextureRegions.size(); i++) {
+        mTextureRegions[i] = std::pair<cv::Point2f, cv::Point2f>( cv::Point2f(mImage.cols-1, mImage.rows-1), cv::Point2f(0, 0) );
+    }
+
+    int id;
+    float u,v;
+    for (int y = 0; y < mTextureMap.rows; y++) {
+        for (int x = 0; x < mTextureMap.cols; x++) {
+            if (mTextureMap.at<int>(y, x) >= 0) {
+                id = mTextureMap.at<int>(y, x);
+                u = x * mGridX + mGridX/2;
+                v = y * mGridY + mGridY/2;
+                
+                if (u < mTextureRegions[id].first.x) 
+                    mTextureRegions[id].first.x = u;
+                if (u > mTextureRegions[id].second.x) 
+                    mTextureRegions[id].second.x = u;
+                if (v < mTextureRegions[id].first.y) 
+                    mTextureRegions[id].first.y = v;
+                if (v > mTextureRegions[id].second.y) 
+                    mTextureRegions[id].second.y = v;
+
+                mTextureRegionPortions[id]++;
+            }
+        }
+    }
+
+    for (int i = 0; i < mTextureRegions.size(); i++) {
+        if (mTextureRegionPortions[i] < mGridNumX/3*mGridNumY/3)
+        {
+            mTextureRegionPortions[i] = 0;
+            continue;
+        }
+
+        mTextureRegionPortions[i] /= ((mTextureRegions[i].second.x-mTextureRegions[i].first.x) / mGridX + 1) *
+                                     ((mTextureRegions[i].second.y-mTextureRegions[i].first.y) / mGridY + 1); 
+
+        std::cout << "textureID " << i << ": " << mTextureRegions[i].first 
+                                               << mTextureRegions[i].second 
+                                               << mTextureRegionPortions[i]
+                                               << std::endl;
+    }
 }

@@ -187,7 +187,7 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
         // std::cout << classIDSeeds[i] << " ";
         checkMap.at<int>(seeds[i].y, seeds[i].x) = classIDSeeds[i];
     }   // std::cout << std::endl;
-    // std::cout << checkMap << std::endl;
+    // std::cout << checkMap << std::endl;  
 
     int dx[4] = {-1, 1,  0, 0};
     int dy[4] = { 0, 0, -1, 1};
@@ -205,7 +205,7 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
                         if (checkMap.at<int>(y+dy[i],x+dx[i]) >= 0) {
 
                             float dist = cv::norm(mGridGaborFeatures[y][x], mGridGaborFeatures[y+dy[i]][x+dx[i]]);
-                            if (dist < minValue && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.3)) {
+                            if (dist < minValue && abs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]) < 0.1)) {
                                 minValue = dist;
                                 minIndex = checkMap.at<int>(y+dy[i],x+dx[i]);
                             }
@@ -213,7 +213,8 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
                         }
                     }
 
-                    if ( minValue < Threshold )
+                    std::cout << minValue << " " << cv::Point2f(x,y) << std::endl;
+                    if ( minValue < 3 * Threshold )
                     {
                         checkMap.at<int>(y,x) = minIndex;
                         ifChange = true;

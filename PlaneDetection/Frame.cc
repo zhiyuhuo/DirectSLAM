@@ -48,16 +48,15 @@ void Frame::ExtractFeaturePoint()
 
     ExtractFastPointOnLevel(mImg, keypoints_fast);
     keypoints_fast = NMSMask(mImg, keypoints_fast, ifGetNMS_fast);
+    keypoints.insert(keypoints.end(), keypoints_fast.begin(), keypoints_fast.end());
 
     ExtractEdgePointOnLevel(mImg, keypoints_edge);
     keypoints_edge = NMSMask(mImg, keypoints_edge, ifGetNMS_edge);
-
-    keypoints.insert(keypoints.end(), keypoints_fast.begin(), keypoints_fast.end());
     keypoints.insert(keypoints.end(), keypoints_edge.begin(), keypoints_edge.end());
 
-    for (int i = 0; i < keypoints.size(); i++) {
-        std::cout << keypoints[i].class_id << " " << keypoints[i].response << " " << std::endl;
-    }
+    // for (int i = 0; i < keypoints.size(); i++) {
+    //     std::cout << keypoints[i].class_id << " " << keypoints[i].response << " " << std::endl;
+    // }
 
     mKps = keypoints;
     
@@ -65,11 +64,11 @@ void Frame::ExtractFeaturePoint()
 
 void Frame::ExtractFastPointOnLevel(cv::Mat image, std::vector<cv::KeyPoint>& keypoints)
 {
-    int fastThreshold = 5;
+    int fastThreshold = 7;
 
     std::vector<cv::KeyPoint> kps;
     cv::FAST(image(cv::Rect(image.cols/8, image.rows/8, image.cols*6/8,image.rows*6/8)), 
-                        kps, fastThreshold, false, cv::FastFeatureDetector::TYPE_9_16);
+                        kps, fastThreshold, true, cv::FastFeatureDetector::TYPE_9_16);
     for (int i = 0; i < kps.size(); i++) {
         kps[i].pt = kps[i].pt + cv::Point2f(image.cols/8, image.rows/8);
     }
