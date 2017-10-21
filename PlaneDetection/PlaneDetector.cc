@@ -145,7 +145,7 @@ bool PlaneDetector::DetectMatch(Frame& ref, Frame& f)
     cv::Mat status, err;
 
     // --- optical flow tracking
-    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(30,30), 8);
+    cv::calcOpticalFlowPyrLK(imageref, imagef, pts0Raw, pts1Raw, status, err, cv::Size(30,30), 6);
     // --- optical flow tracking end
 
     // --- epipolar search tracking
@@ -163,7 +163,8 @@ bool PlaneDetector::DetectMatch(Frame& ref, Frame& f)
     // check the error
     for (int i = 0; i < status.rows; i++) {
         // std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
-        if (status.at<unsigned char>(i, 0) && err.at<unsigned char>(i, 0) < 30) {
+        if (status.at<unsigned char>(i, 0)  )// && err.at<unsigned char>(i, 0) < 30) 
+        {
             // std::cout << i << ": " << int(err.at<unsigned char>(i, 0)) << std::endl;
             indexPtsFeature.push_back(indexPtsRaw[i]);
             pts0Feature.push_back(pts0Raw[i]);

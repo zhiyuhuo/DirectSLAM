@@ -33,6 +33,7 @@ public:
     void ComputeGridFeatures();
     cv::Mat ComputeAGridFeature(cv::Mat image);
     cv::Mat ConnectSimilarGrids();
+    cv::Mat MergeSimilarTexture();
     void GetTextureRegions();
 };
 

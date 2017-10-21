@@ -1,0 +1,1 @@
+sudo ../bin/appTestPlaneDetection ../configs/calibration_samsungs7.txt /home/rokid/Pictures/slam_database/samsungs7_2/rgb.txt /home/rokid/Pictures/slam_database/samsungs7_2/imu_data.txt /home/rokid/Pictures/slam_database/samsungs7_2/SLAMResults.txt ../app/config.yaml

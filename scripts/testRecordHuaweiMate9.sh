@@ -1,1 +1,1 @@
-sudo ../bin/appTestPlaneDetection ../configs/calibration_huaweimate9.txt /home/rokid/Pictures/slam_database/huaweimate9_17/rgb.txt /home/rokid/Pictures/slam_database/huaweimate9_17/imu_data.txt /home/rokid/Pictures/slam_database/huaweimate9_17/SLAMResults.txt ../app/config.yaml
+sudo ../bin/appTestPlaneDetection ../configs/calibration_huaweimate9.txt /home/rokid/Pictures/slam_database/huaweimate9_9/rgb.txt /home/rokid/Pictures/slam_database/huaweimate9_9/imu_data.txt /home/rokid/Pictures/slam_database/huaweimate9_9/SLAMResults.txt ../app/config.yaml

@@ -7,7 +7,7 @@ TextureSegment::TextureSegment(cv::Mat image, int gridX, int gridY)
 
 void TextureSegment::InitGaborFilters()
 {
-    cv::Size ksize(7, 7);
+    cv::Size ksize(3, 3);
     double pi_value = 3.14159265;
     std::vector<double> sigma = {1, 2, 3, 4, 5};
     std::vector<double> theta = {pi_value * 0.125, pi_value * 0.25, pi_value * 0.375, pi_value * 0.50, 
@@ -149,8 +149,13 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
     classIDSeeds[0] = 0;
     for (int i = 1; i < seeds.size(); i++) {
         for (int j = 0; j < i; j++) {
-            if ( cv::norm(mGridGaborFeatures[seeds[j].y][seeds[j].x], mGridGaborFeatures[seeds[i].y][seeds[i].x]) < Threshold
-                && fabs(mGrayScaleMap.at<float>(seeds[j].y,seeds[j].x) - mGrayScaleMap.at<float>(seeds[i].y,seeds[i].x)) < 0.1 ) {             
+            float distGabor = cv::norm(mGridGaborFeatures[seeds[j].y][seeds[j].x], mGridGaborFeatures[seeds[i].y][seeds[i].x]);
+            float distColor = fabs(mGrayScaleMap.at<float>(seeds[j].y,seeds[j].x) - mGrayScaleMap.at<float>(seeds[i].y,seeds[i].x));
+            std::cout << i << " " << j << ": " << distGabor << " " << distColor << std::endl;
+            if ( 
+                distGabor < Threshold
+                && distColor < 0.1 
+            ) {             
                 classIDSeeds[i] = classIDSeeds[j];
             }
         }
@@ -183,7 +188,7 @@ cv::Mat TextureSegment::ConnectSimilarGrids()
 
                             float distGabor = cv::norm(mGridGaborFeatures[y][x] - mGridGaborFeatures[y+dy[i]][x+dx[i]]);
                             float distColor = fabs(mGrayScaleMap.at<float>(y,x) - mGrayScaleMap.at<float>(y+dy[i],x+dx[i]));
-                            std::cout << distGabor << " " << distColor << std::endl;
+                            // std::cout << distGabor << " " << distColor << std::endl;
                             if (distGabor < minValue && distColor < 0.05) {
                                 minValue = distGabor;
                                 minIndex = checkMap.at<int>(y+dy[i],x+dx[i]);
